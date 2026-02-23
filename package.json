@@ -1,13 +1,14 @@
 {
   "name": "heptabase-cli",
   "version": "0.1.0",
+  "type": "module",
   "description": "CLI for your personal Heptabase knowledge base — search, read, and write notes from the terminal",
   "bin": {
-    "heptabase": "./bin/heptabase.js"
+    "heptabase": "./bin/heptabase.cjs"
   },
   "dependencies": {
-    "mcporter": "^0.7.3",
-    "commander": "^13.0.0"
+    "commander": "^13.0.0",
+    "mcporter": "^0.7.3"
   },
   "keywords": [
     "heptabase",
@@ -25,5 +26,8 @@
   "homepage": "https://github.com/madeyexz/heptabase-cli#readme",
   "engines": {
     "bun": ">=1.0.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.21.0"
   }
 }

@@ -9,7 +9,16 @@ Ported from Official [Heptabase MCP](https://support.heptabase.com/en/articles/1
 
 Pick one:
 
-### Option 1: Homebrew (recommended on macOS)
+### Option 1: npm (recommended on Windows)
+
+```bash
+npm install -g heptabase-cli
+heptabase --help
+```
+
+Requires [Node.js](https://nodejs.org/). Works on Windows, macOS, and Linux.
+
+### Option 2: Homebrew (recommended on macOS)
 
 ```bash
 brew tap madeyexz/tap
@@ -17,12 +26,12 @@ brew install madeyexz/tap/heptabase-cli
 heptabase --help
 ```
 
-### Option 2: Standalone binary
+### Option 3: Standalone binary (macOS arm64 only)
 
 After install, use `heptabase` for all commands.
 
-Current release binary target: macOS arm64.
-If you are on another platform, use `bunx` or build from source.
+> **Note**: The standalone binary is currently macOS arm64 only.
+> On Windows or other platforms, use Option 1 (npm) or Option 4 (bunx).
 
 ```bash
 mkdir -p ~/.local/bin
@@ -46,7 +55,7 @@ chmod +x heptabase
 sudo mv heptabase /usr/local/bin/
 ```
 
-### Option 3: `bunx` (no install, requires [Bun](https://bun.sh/))
+### Option 4: `bunx` (no install, requires [Bun](https://bun.sh/))
 
 ```bash
 bunx heptabase-cli --help
@@ -68,9 +77,11 @@ Agent command convention: use `heptabase ...` (not `bunx heptabase-cli ...`).
 
 Run any command (examples below). The first run opens a browser for Heptabase OAuth.
 
-- Tokens are cached in `~/.mcp-auth/`
+- Tokens are cached in `~/.mcp-auth/` (macOS/Linux) or `%USERPROFILE%\.mcp-auth\` (Windows)
 - Tokens auto-refresh
-- Reset login with `rm -rf ~/.mcp-auth/`
+- Reset login:
+  - macOS/Linux: `rm -rf ~/.mcp-auth/`
+  - Windows: `rmdir /s /q %USERPROFILE%\.mcp-auth`
 
 ## Usage
 
@@ -114,9 +125,12 @@ Supported output formats (`--output`): `text` (default), `json`, `markdown`, `ra
 
 ## Troubleshooting
 
-- `command not found: heptabase`: use `bunx heptabase-cli ...` or ensure `~/.local/bin` (or `/usr/local/bin`) is in your `PATH`.
+- `command not found: heptabase` (macOS/Linux): use `bunx heptabase-cli ...` or ensure `~/.local/bin` (or `/usr/local/bin`) is in your `PATH`.
+- `'heptabase' is not recognized` (Windows): ensure npm global bin is in your `PATH`, or use `npx heptabase-cli ...`.
 - Browser did not open for OAuth: copy the login URL from terminal and open it manually.
-- Need to re-authenticate: `rm -rf ~/.mcp-auth/` and run a command again.
+- Need to re-authenticate:
+  - macOS/Linux: `rm -rf ~/.mcp-auth/`
+  - Windows (PowerShell): `Remove-Item -Recurse -Force "$env:USERPROFILE\.mcp-auth"`
 
 ## Development (Advanced)
 
