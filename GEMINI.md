@@ -60,3 +60,7 @@
 ### [L-005] save-to-note-card 的標題規則
 - **規則**：`--content` 的第一行必須是 `# 標題`，Heptabase 會自動將其設為卡片標題。
 - **實踐**：匯入外部檔案時，應在內容前加上 `# [前綴] 描述性標題\n\n` 以確保卡片有明確的標題。
+
+### [L-006] CLI 無法建立可點擊的 @mention 連結
+- **規則**：透過 MCP API 的 `save-to-note-card` 寫入的內容，無論使用 `<mention>` XML 標籤、`heptabase://` deeplink 或 Markdown 連結格式，都**不會被渲染為可點擊的內部物件連結**。API 僅接受純 Markdown 文字。
+- **實踐**：在 Hub/TOC 類型的卡片中，直接使用白板名稱（如「→ 白板『AR-BIM_Dynamo常用節點』」）作為文字標記，方便使用者透過搜尋功能跳轉。

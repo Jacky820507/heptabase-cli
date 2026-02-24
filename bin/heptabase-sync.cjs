@@ -21,6 +21,27 @@ function saveToNoteCard(content) {
     return result.trim();
 }
 
+/** Call heptabase-cli.ts get-journal-range */
+function getJournalRange(startDate, endDate) {
+    const tsx = getTsxPath();
+    const script = path.join(__dirname, "..", "heptabase-cli.ts");
+    const result = execFileSync("node", [tsx, script, "get-journal-range", "--start-date", startDate, "--end-date", endDate, "--output", "raw"], {
+        encoding: "utf8",
+    });
+    const parsed = JSON.parse(result);
+    return parsed.raw.content.find(c => c.type === 'text')?.text || "";
+}
+
+/** Call heptabase-cli.ts search-whiteboards */
+function searchWhiteboards(keywords) {
+    const tsx = getTsxPath();
+    const script = path.join(__dirname, "..", "heptabase-cli.ts");
+    const result = execFileSync("node", [tsx, script, "search-whiteboards", "--keywords", keywords.join(","), "--output", "json"], {
+        encoding: "utf8",
+    });
+    return JSON.parse(result);
+}
+
 /** Parse YAML frontmatter from a markdown file (simple key: value parser) */
 function parseFrontmatter(raw) {
     const match = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/);
@@ -127,6 +148,43 @@ function cmdLessons(filePath) {
     console.log(result || "Done.");
 }
 
+async function cmdOrganize(days = 7) {
+    console.log(`Analyzing journals for the last ${days} days...`);
+
+    // 1. Calculate dates
+    const end = new Date();
+    const start = new Date();
+    start.setDate(end.getDate() - days);
+
+    const formatDate = (d) => d.toISOString().split("T")[0];
+    const startDateStr = formatDate(start);
+    const endDateStr = formatDate(end);
+
+    try {
+        // 2. Fetch journal entries
+        const journalsText = getJournalRange(startDateStr, endDateStr);
+        if (!journalsText || journalsText.length === 0) {
+            console.log("No journal entries found in this period.");
+            return;
+        }
+
+        // 3. Consolidate content for "AI analysis"
+        console.log(`Retrieved journal data.`);
+
+        console.log("\n[AUTO-ORG-DATA-START]");
+        console.log(JSON.stringify({
+            startDate: startDateStr,
+            endDate: endDateStr,
+            content: journalsText
+        }, null, 2));
+        console.log("[AUTO-ORG-DATA-END]");
+
+        console.log("\nData collected. Please provide this to your AI assistant for organization suggestions.");
+    } catch (err) {
+        console.error(`Error during organization analysis: ${err.message}`);
+    }
+}
+
 // ── CLI ──────────────────────────────────────────────────────────────────────
 
 function printHelp() {
@@ -137,6 +195,7 @@ Usage:
   node bin/heptabase-sync.cjs domain <file.md>       Sync one domain SOP
   node bin/heptabase-sync.cjs domain-all <dir>       Sync all domain SOPs in a directory
   node bin/heptabase-sync.cjs lessons <GEMINI.md>    Sync lessons learned section
+  node bin/heptabase-sync.cjs organize [--days N]    Analyze recent journals for organization
 
 Examples:
   node bin/heptabase-sync.cjs domain e:\\RevitMCP\\domain\\detail-component-sync.md
@@ -169,6 +228,10 @@ switch (subcommand) {
         break;
     case "lessons":
         cmdLessons(path.resolve(target));
+        break;
+    case "organize":
+        const days = target ? parseInt(target) : 7;
+        cmdOrganize(days);
         break;
     default:
         console.error(`Unknown subcommand: '${subcommand}'`);
