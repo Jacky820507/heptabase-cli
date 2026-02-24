@@ -114,12 +114,12 @@ Supported output formats (`--output`): `text` (default), `json`, `markdown`, `ra
 ## Commands
 
 - `search-whiteboards`
-- `semantic-search-objects`
-- `get-object`
+1. `semantic-search-objects` — Find relevant notes.
+21. `get-journal-range` — Get journals over a period (split if > 92 days).
+2. **Review & Summarize (AI/Manual)** — Consolidate progress or patterns, then use `append-to-journal` to write the summary into today's journal.
+` to write back results.
 - `get-whiteboard-with-objects`
 - `get-journal-range`
-- `save-to-note-card`
-- `append-to-journal`
 - `search-pdf-content`
 - `get-pdf-pages`
 

@@ -115,8 +115,7 @@ heptabase get-pdf-pages --pdf-card-id <id> --start-page-number 1 --end-page-numb
 
 1. `semantic-search-objects` — 找到相關筆記
 2. `get-object` — 讀取完整內容
-3. 分析、摘要或回答問題
-4. `save-to-note-card` 或 `append-to-journal` — 將結果寫回
+3. **分析與記錄 (AI/手動)** — 經分析或摘要後，使用 `save-to-note-card` 或 `append-to-journal` 寫回結果
 
 ### 探索白板
 
@@ -127,8 +126,7 @@ heptabase get-pdf-pages --pdf-card-id <id> --start-page-number 1 --end-page-numb
 ### 回顧日誌
 
 1. `get-journal-range` — 取得一段時間的日誌（超過 92 天需分次）
-2. 彙整或分析規律
-3. `append-to-journal` — 將摘要寫入今日日誌
+2. **彙整與分析 (AI/手動)** — 彙整進度或規律後，使用 `append-to-journal` 將摘要寫入今日日誌
 
 ---
 
