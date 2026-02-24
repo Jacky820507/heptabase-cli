@@ -65,44 +65,44 @@ bunx heptabase-cli --help
 ### 搜尋
 
 ```bash
-# 搜尋白板
+# 搜尋白板（關鍵字可多個，以逗號分隔）
 heptabase search-whiteboards --keywords "專案管理,工作流程"
 
-# 語意搜尋筆記（支援 1-3 個查詢）
-heptabase semantic-search-objects --queries "機器學習,深度學習" --result-object-types "card,pdfCard"
+# 語意搜尋（支援 1-3 個查詢，找出最相關的內容）
+heptabase semantic-search-objects --queries "健康飲食,規律運動" --result-object-types "card,pdfCard"
 ```
 
 ### 閱讀
 
 ```bash
-# 讀取特定物件
-heptabase get-object --object-id <id> --object-type card
+# 讀取特定卡片或物件
+heptabase get-object --object-id [卡片ID] --object-type card
 
-# 取得日誌（日期範圍，最多 92 天）
-heptabase get-journal-range --start-date 2026-01-01 --end-date 2026-02-23
+# 取得日誌（最多可讀取 92 天範圍）
+heptabase get-journal-range --start-date 2026-02-01 --end-date 2026-02-24
 
-# 瀏覽白板
-heptabase get-whiteboard-with-objects --whiteboard-id <id>
+# 獲取白板內容（包含上面的卡片、區塊與連結關係）
+heptabase get-whiteboard-with-objects --whiteboard-id [白板ID]
 ```
 
 ### 寫入
 
 ```bash
-# 建立新筆記卡片
-heptabase save-to-note-card --content "# 筆記標題\n\n這裡輸入詳細內容（支援 Markdown）"
+# 建立新筆記卡片 (支援樣式標註，\n 代表換行)
+heptabase save-to-note-card --content "# 讀書心得\n\n今天讀了《原子習慣》，獲益良多。"
 
-# 附加到今日日誌
-heptabase append-to-journal --content "今天完成了 CLI 的 Windows 支援"
+# 快速附加內容到今日日誌
+heptabase append-to-journal --content "買午餐時想到一個新點子：可以用 CLI 同步標籤"
 ```
 
 ### PDF 操作
 
 ```bash
-# 先搜尋 PDF 內容
-heptabase search-pdf-content --pdf-card-id <id> --keywords "關鍵字1,關鍵字2"
+# 搜尋 PDF 內的文字
+heptabase search-pdf-content --pdf-card-id [PDF卡片ID] --keywords "重點,摘要"
 
-# 再讀取特定頁面
-heptabase get-pdf-pages --pdf-card-id <id> --start-page-number 1 --end-page-number 10
+# 讀取特定頁碼的文字內容
+heptabase get-pdf-pages --pdf-card-id [PDF卡片ID] --start-page-number 1 --end-page-number 5
 ```
 
 ---
