@@ -57,6 +57,7 @@ bunx heptabase-cli --help
 | `append-to-journal` | 將內容附加到今天的日誌 |
 | `search-pdf-content` | 在 PDF 中搜尋關鍵字 |
 | `get-pdf-pages` | 讀取 PDF 指定頁碼內容 |
+| `node bin/heptabase-sync.cjs organize` | 歸納日誌主題並建議存放白板 |
 
 ---
 
