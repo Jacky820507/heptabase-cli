@@ -127,20 +127,20 @@ Supported output formats (`--output`): `text` (default), `json`, `markdown`, `ra
 
 ### Search → Read → Write
 
-- `semantic-search-objects` — Find relevant notes.
-- `get-object` — Read the full content.
-- `save-to-note-card` or `append-to-journal` — Write back results.
+`semantic-search-objects` — Find relevant notes.
+`get-object` — Read the full content.
+`save-to-note-card` or `append-to-journal` — Write back results.
 
 ### Explore Whiteboards
 
-- `search-whiteboards` — Search whiteboards by topic.
-- `get-whiteboard-with-objects` — View all objects and connections.
-- `get-object` — Deep read specific cards.
+`search-whiteboards` — Search whiteboards by topic.
+`get-whiteboard-with-objects` — View all objects and connections.
+`get-object` — Deep read specific cards.
 
 ### Review Journals
 
-- `get-journal-range` — Get journals over a period.
-- `append-to-journal` — Write the summary into today's journal.
+`get-journal-range` — Get journals over a period.
+`append-to-journal` — Write the summary into today's journal.
 
 ## Troubleshooting
 
