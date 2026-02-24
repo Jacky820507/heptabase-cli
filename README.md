@@ -113,20 +113,20 @@ heptabase get-pdf-pages --pdf-card-id <id> --start-page-number 1 --end-page-numb
 
 ### 搜尋 → 閱讀 → 儲存
 
-1. `semantic-search-objects` — 找到相關筆記
-2. `get-object` — 讀取完整內容
-3. `save-to-note-card` 或 `append-to-journal` — **分析與記錄 (AI/手動)**：經分析或摘要後寫回結果
+- `semantic-search-objects` — 找到相關筆記
+- `get-object` — 讀取完整內容
+- `save-to-note-card` 或 `append-to-journal` — 將結果寫回
 
 ### 探索白板
 
-1. `search-whiteboards` — 依主題搜尋白板
-2. `get-whiteboard-with-objects` — 查看所有物件與連結
-3. `get-object` — 深入閱讀特定卡片
+- `search-whiteboards` — 依主題搜尋白板
+- `get-whiteboard-with-objects` — 查看所有物件與連結
+- `get-object` — 深入閱讀特定卡片
 
 ### 回顧日誌
 
-1. `get-journal-range` — 取得一段時間的日誌（超過 92 天需分次）
-2. `append-to-journal` — **彙整與分析 (AI/手動)**：彙整進度或規律後將摘要寫入今日日誌
+- `get-journal-range` — 取得一段時間的日誌（超過 92 天需分次）
+- `append-to-journal` — 將摘要寫入今日日誌
 
 ---
 

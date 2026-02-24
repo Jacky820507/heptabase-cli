@@ -123,6 +123,25 @@ Supported output formats (`--output`): `text` (default), `json`, `markdown`, `ra
 - `search-pdf-content`
 - `get-pdf-pages`
 
+## Common Workflows
+
+### Search → Read → Write
+
+- `semantic-search-objects` — Find relevant notes.
+- `get-object` — Read the full content.
+- `save-to-note-card` or `append-to-journal` — Write back results.
+
+### Explore Whiteboards
+
+- `search-whiteboards` — Search whiteboards by topic.
+- `get-whiteboard-with-objects` — View all objects and connections.
+- `get-object` — Deep read specific cards.
+
+### Review Journals
+
+- `get-journal-range` — Get journals over a period.
+- `append-to-journal` — Write the summary into today's journal.
+
 ## Troubleshooting
 
 - `command not found: heptabase` (macOS/Linux): use `bunx heptabase-cli ...` or ensure `~/.local/bin` (or `/usr/local/bin`) is in your `PATH`.
@@ -131,25 +150,6 @@ Supported output formats (`--output`): `text` (default), `json`, `markdown`, `ra
 - Need to re-authenticate:
   - macOS/Linux: `rm -rf ~/.mcp-auth/`
   - Windows (PowerShell): `Remove-Item -Recurse -Force "$env:USERPROFILE\.mcp-auth"`
-
-## Common Workflows
-
-### Search → Read → Write
-
-1. `semantic-search-objects` — Find relevant notes.
-2. `get-object` — Read the full content.
-3. `save-to-note-card` or `append-to-journal` — **Analyze & Record (AI/Manual)**: After analysis or summarization, write back results.
-
-### Exploring Whiteboards
-
-1. `search-whiteboards` — Search whiteboards by topic.
-2. `get-whiteboard-with-objects` — View all objects and links on the board.
-3. `get-object` — Read specific cards in depth.
-
-### Review Journals
-
-1. `get-journal-range` — Get journals over a period (split if > 92 days).
-2. `append-to-journal` — **Review & Summarize (AI/Manual)**: Consolidate progress or patterns, then write the summary into today's journal.
 
 ## Development (Advanced)
 
