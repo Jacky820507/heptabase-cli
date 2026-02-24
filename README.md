@@ -68,10 +68,10 @@ bunx heptabase-cli --help
 # 搜尋白板（關鍵字可多個，以逗號分隔）
 heptabase search-whiteboards --keywords "專案管理,工作流程"
 
-# 語意搜尋（不看關鍵字，而是根據「意思」找出最相關的內容）
-# --queries: 支援 1-3 個查詢概念
-# --result-object-types: 指定搜尋對象（如 card: 筆記卡片, pdfCard: PDF）
-heptabase semantic-search-objects --queries "如何保持身體健康" --result-object-types "card"
+# 語意搜尋：根據「意思」而非關鍵字來尋找相關筆記
+heptabase semantic-search-objects \
+  --queries "如何保持身體健康" \
+  --result-object-types card
 ```
 
 ### 閱讀
