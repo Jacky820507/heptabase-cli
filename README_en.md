@@ -114,12 +114,12 @@ Supported output formats (`--output`): `text` (default), `json`, `markdown`, `ra
 ## Commands
 
 - `search-whiteboards`
-1. `semantic-search-objects` — Find relevant notes.
-21. `get-journal-range` — Get journals over a period (split if > 92 days).
-2. **Review & Summarize (AI/Manual)** — Consolidate progress or patterns, then use `append-to-journal` to write the summary into today's journal.
-` to write back results.
+- `semantic-search-objects`
+- `get-object`
 - `get-whiteboard-with-objects`
 - `get-journal-range`
+- `save-to-note-card`
+- `append-to-journal`
 - `search-pdf-content`
 - `get-pdf-pages`
 
@@ -131,6 +131,25 @@ Supported output formats (`--output`): `text` (default), `json`, `markdown`, `ra
 - Need to re-authenticate:
   - macOS/Linux: `rm -rf ~/.mcp-auth/`
   - Windows (PowerShell): `Remove-Item -Recurse -Force "$env:USERPROFILE\.mcp-auth"`
+
+## Common Workflows
+
+### Search → Read → Write
+
+1. `semantic-search-objects` — Find relevant notes.
+2. `get-object` — Read the full content.
+3. `save-to-note-card` or `append-to-journal` — **Analyze & Record (AI/Manual)**: After analysis or summarization, write back results.
+
+### Exploring Whiteboards
+
+1. `search-whiteboards` — Search whiteboards by topic.
+2. `get-whiteboard-with-objects` — View all objects and links on the board.
+3. `get-object` — Read specific cards in depth.
+
+### Review Journals
+
+1. `get-journal-range` — Get journals over a period (split if > 92 days).
+2. `append-to-journal` — **Review & Summarize (AI/Manual)**: Consolidate progress or patterns, then write the summary into today's journal.
 
 ## Development (Advanced)
 
