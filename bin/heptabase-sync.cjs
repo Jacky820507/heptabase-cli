@@ -192,46 +192,56 @@ function printHelp() {
 heptabase-sync — Sync local domain SOPs & lessons to Heptabase
 
 Usage:
-  node bin/heptabase-sync.cjs domain <file.md>       Sync one domain SOP
-  node bin/heptabase-sync.cjs domain-all <dir>       Sync all domain SOPs in a directory
-  node bin/heptabase-sync.cjs lessons <GEMINI.md>    Sync lessons learned section
-  node bin/heptabase-sync.cjs organize [--days N]    Analyze recent journals for organization
+  heptabase domain <file.md>       Sync one domain SOP
+  heptabase domain-all <dir>       Sync all domain SOPs in a directory
+  heptabase lessons <GEMINI.md>    Sync lessons learned section
+  heptabase organize [--days N]    Analyze recent journals for organization
 
 Examples:
-  node bin/heptabase-sync.cjs domain e:\\RevitMCP\\domain\\detail-component-sync.md
-  node bin/heptabase-sync.cjs domain-all e:\\RevitMCP\\domain
-  node bin/heptabase-sync.cjs lessons e:\\RevitMCP\\GEMINI.md
+  heptabase domain e:\\RevitMCP\\domain\\detail-component-sync.md
+  heptabase organize 7
 `);
 }
 
 const args = process.argv.slice(2);
 const subcommand = args[0];
-const target = args[1];
 
 if (!subcommand || subcommand === "--help" || subcommand === "-h") {
     printHelp();
     process.exit(0);
 }
 
-if (!target) {
-    console.error(`Error: missing path argument for '${subcommand}'.`);
-    printHelp();
-    process.exit(1);
+// Simple flag parser
+function getFlagValue(flagName) {
+    const idx = args.indexOf(flagName);
+    if (idx !== -1 && args[idx + 1]) {
+        return args[idx + 1];
+    }
+    return null;
 }
 
 switch (subcommand) {
     case "domain":
-        cmdDomain(path.resolve(target));
+        if (!args[1]) { console.error("Error: missing file path"); process.exit(1); }
+        cmdDomain(path.resolve(args[1]));
         break;
     case "domain-all":
-        cmdDomainAll(path.resolve(target));
+        if (!args[1]) { console.error("Error: missing directory path"); process.exit(1); }
+        cmdDomainAll(path.resolve(args[1]));
         break;
     case "lessons":
-        cmdLessons(path.resolve(target));
+        if (!args[1]) { console.error("Error: missing file path"); process.exit(1); }
+        cmdLessons(path.resolve(args[1]));
         break;
     case "organize":
-        const days = target ? parseInt(target) : 7;
-        cmdOrganize(days);
+        let days = 7;
+        const daysFlag = getFlagValue("--days");
+        if (daysFlag) {
+            days = parseInt(daysFlag);
+        } else if (args[1] && !args[1].startsWith("-")) {
+            days = parseInt(args[1]);
+        }
+        cmdOrganize(isNaN(days) ? 7 : days);
         break;
     default:
         console.error(`Unknown subcommand: '${subcommand}'`);

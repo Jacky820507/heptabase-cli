@@ -100,6 +100,10 @@ heptabase get-journal-range --start-date 2026-01-01 --end-date 2026-02-21
 # Write
 heptabase save-to-note-card --content "# Title\n\nBody text"
 heptabase append-to-journal --content "Some entry"
+
+# AI Auto-Organization
+# heptabase organize <days>
+heptabase organize 7
 ```
 
 List all commands:
@@ -122,6 +126,7 @@ Supported output formats (`--output`): `text` (default), `json`, `markdown`, `ra
 - `append-to-journal`
 - `search-pdf-content`
 - `get-pdf-pages`
+- `organize` (AI Auto-Organization)
 
 ## Troubleshooting
 
