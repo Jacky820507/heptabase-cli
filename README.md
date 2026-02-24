@@ -88,10 +88,8 @@ heptabase get-whiteboard-with-objects --whiteboard-id <id>
 ### 寫入
 
 ```bash
-# 建立新筆記卡片（第一行 h1 為內容標題）
-heptabase save-to-note-card --content "# 筆記標題
-
-這裡輸入你的筆記詳細內容（支援 Markdown 語法）"
+# 建立新筆記卡片
+heptabase save-to-note-card --content "# 筆記標題\n\n這裡輸入詳細內容（支援 Markdown）"
 
 # 附加到今日日誌
 heptabase append-to-journal --content "今天完成了 CLI 的 Windows 支援"
