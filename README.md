@@ -78,13 +78,24 @@ heptabase semantic-search-objects \
 
 ```bash
 # 讀取特定卡片或物件
-heptabase get-object --object-id [卡片ID] --object-type card
+# --object-id: 欲讀取的卡片或物件 ID
+# --object-type: 物件類型（如 card, journal, pdfCard）
+heptabase get-object \
+  --object-id [卡片ID] \
+  --object-type card
 
-# 取得日誌（最多可讀取 92 天範圍）
-heptabase get-journal-range --start-date 2026-02-01 --end-date 2026-02-24
+# 取得指定範圍的日誌內容
+# --start-date / --end-date: 開始與結束日期（YYYY-MM-DD）
+# 單次請求範圍上限為 92 天
+heptabase get-journal-range \
+  --start-date 2026-02-01 \
+  --end-date 2026-02-24
 
-# 獲取白板內容（包含上面的卡片、區塊與連結關係）
-heptabase get-whiteboard-with-objects --whiteboard-id [白板ID]
+# 獲取白板內容
+# --whiteboard-id: 欲獲取的白板 ID
+# 回傳內容包含白板上的所有卡片資訊與排列邏輯
+heptabase get-whiteboard-with-objects \
+  --whiteboard-id [白板ID]
 ```
 
 ### 寫入
