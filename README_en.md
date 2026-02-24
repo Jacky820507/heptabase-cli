@@ -123,25 +123,6 @@ Supported output formats (`--output`): `text` (default), `json`, `markdown`, `ra
 - `search-pdf-content`
 - `get-pdf-pages`
 
-## Common Workflows
-
-### Search → Read → Write
-
-`semantic-search-objects` — Find relevant notes.
-`get-object` — Read the full content.
-`save-to-note-card` or `append-to-journal` — Write back results.
-
-### Explore Whiteboards
-
-`search-whiteboards` — Search whiteboards by topic.
-`get-whiteboard-with-objects` — View all objects and connections.
-`get-object` — Deep read specific cards.
-
-### Review Journals
-
-`get-journal-range` — Get journals over a period.
-`append-to-journal` — Write the summary into today's journal.
-
 ## Troubleshooting
 
 - `command not found: heptabase` (macOS/Linux): use `bunx heptabase-cli ...` or ensure `~/.local/bin` (or `/usr/local/bin`) is in your `PATH`.
