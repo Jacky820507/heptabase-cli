@@ -1,4 +1,10 @@
 /heptabase
 /heptabase.exe
-/node_modules
-/export
+/node_modules/
+/export/
+*.json
+*.txt
+*.log
+.DS_Store
+.env
+dist/
