@@ -10,7 +10,7 @@ A CLI that wraps the Heptabase MCP server. Search, read, and write to your Hepta
 
 ## Prerequisites
 
-- The `heptabase` binary must be on your PATH (see https://github.com/madeyexz/heptabase-cli)
+- The `heptabase` binary must be on your PATH (see https://github.com/Jacky820507/heptabase-cli)
 - First run opens a browser for OAuth login; tokens cache in `~/.mcp-auth/` (macOS/Linux) or `%USERPROFILE%\.mcp-auth\` (Windows)
 
 ## Tools

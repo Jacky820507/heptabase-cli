@@ -64,3 +64,15 @@
 ### [L-006] CLI 無法建立可點擊的 @mention 連結
 - **規則**：透過 MCP API 的 `save-to-note-card` 寫入的內容，無論使用 `<mention>` XML 標籤、`heptabase://` deeplink 或 Markdown 連結格式，都**不會被渲染為可點擊的內部物件連結**。API 僅接受純 Markdown 文字。
 - **實踐**：在 Hub/TOC 類型的卡片中，直接使用白板名稱（如「→ 白板『AR-BIM_Dynamo常用節點』」）作為文字標記，方便使用者透過搜尋功能跳轉。
+
+### [L-007] 白板 XML 中的 Section 與卡片歸屬關係
+- **規則**：在 `get-whiteboard-with-objects` 的 XML 中，`<section>` 標籤包含 `title` 和逗號分隔的 `objectIds`。
+- **實踐**：匯入時可解析此關係，將卡片歸類到對應名稱的資料夾中。若卡片不屬於任何 section，則放在根目錄。
+
+### [L-008] PDF 分頁讀取與參數修正
+- **規則**：`get-pdf-pages` 的參數正確名稱為 `--pdf-card-id` (非 pdf-id)、`--start-page-number` (非 start-page) 與 `--end-page-number`。且大型 PDF 需分批（如每 10 頁）讀取以避免逾時或 MCP 連線中斷。
+- **實踐**：在 `heptabase-sync.cjs` 中實作分批抓取邏輯，並對 PDF 內容進行 XML/中繼資料清洗。
+
+### [L-009] 圖片佔位標記 (Image Placeholders)
+- **規則**：MCP API 不支援直接下載圖片檔或取得永久 URL。直接刪除 `<image>` 標籤會導致 LLM 失去視覺脈絡。
+- **實踐**：將 `<image fileId="..."/>` 轉換為 `> 📷 *[Image Placeholder: fileId]*`。這能告知 LLM 此處有視覺資訊，維持文字邏輯的連貫性。

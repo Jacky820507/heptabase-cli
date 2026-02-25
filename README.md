@@ -163,12 +163,17 @@ heptabase get-pdf-pages \
 
 ### 匯出白板 (Export)
 
-```bash
-# 用關鍵字搜尋並匯出
-heptabase export --keyword "白板名稱" --output-dir ./backup
+將白板內容完整匯出為本地 Markdown 檔案，適合備份或與其他 AI 工具配合。
 
-# 用白板 ID 匯出
-heptabase export --whiteboard-id <id> --output-dir E:\Backup
+1. `heptabase export --keyword "白板名稱"` — 搜尋並準備匯出資料
+2. **自動分類**：依據白板 Section 自動建立子資料夾
+3. **附件處理**：自動擷取 PDF 內容並插入圖片佔位標記
+4. **產生索引**：自動生成 `_index.md` 並依區塊分組列出卡片
+5. **內容清洗**：移除 XML 標籤並將 HTML 表格轉為 Markdown 格式
+
+```bash
+# 範例指令
+heptabase export --keyword "建築設計" --output-dir ./backup
 ```
 
 ---

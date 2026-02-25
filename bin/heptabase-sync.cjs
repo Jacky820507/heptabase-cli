@@ -66,6 +66,19 @@ function getObject(objectId, objectType) {
     return parsed.raw.content.find(c => c.type === 'text')?.text || "";
 }
 
+/** Call heptabase-cli.ts get-pdf-pages to retrieve PDF content */
+function getPdfPages(pdfId, startPage, endPage) {
+    const tsx = getTsxPath();
+    const script = path.join(__dirname, "..", "heptabase-cli.ts");
+    const args = [tsx, script, "get-pdf-pages", "--pdf-card-id", pdfId, "--start-page-number", String(startPage), "--end-page-number", String(endPage), "--output", "raw"];
+    const result = execFileSync("node", args, {
+        encoding: "utf8",
+        maxBuffer: 50 * 1024 * 1024,
+    });
+    const parsed = JSON.parse(result);
+    return parsed.raw.content.find(c => c.type === 'text')?.text || "";
+}
+
 /** Sanitize a string for use as a filename */
 function sanitizeFilename(name) {
     return name
@@ -257,7 +270,32 @@ async function cmdExport(whiteboardId, keyword, outputDir) {
     const cards = [];
     let match;
     while ((match = cardRegex.exec(wbText)) !== null) {
-        cards.push({ id: match[1], title: match[2] });
+        cards.push({ id: match[1], title: match[2], type: 'card' });
+    }
+
+    // Parse all pdfCards from the XML
+    const pdfRegex = /<pdfCard\s+id="([^"]+)"\s+title="([^"]*)"/g;
+    while ((match = pdfRegex.exec(wbText)) !== null) {
+        // Check if this pdfCard has totalPages (= already parsed)
+        const pdfBlock = wbText.substring(match.index, wbText.indexOf('</pdfCard>', match.index) + 10);
+        const pagesMatch = pdfBlock.match(/totalPages=(\d+)/);
+        cards.push({
+            id: match[1],
+            title: match[2],
+            type: 'pdfCard',
+            totalPages: pagesMatch ? parseInt(pagesMatch[1]) : 0
+        });
+    }
+
+    // Parse sections from the XML
+    const sectionRegex = /<section\s+title="([^"]*)"\s+objectIds="([^"]*)"/g;
+    const sections = [];
+    const objectToSection = {};  // objectId -> section title
+    while ((match = sectionRegex.exec(wbText)) !== null) {
+        const sectionTitle = match[1];
+        const objectIds = match[2].split(',').map(id => id.trim()).filter(Boolean);
+        sections.push({ title: sectionTitle, objectIds });
+        objectIds.forEach(id => { objectToSection[id] = sectionTitle; });
     }
 
     if (cards.length === 0) {
@@ -265,7 +303,12 @@ async function cmdExport(whiteboardId, keyword, outputDir) {
         return;
     }
 
-    console.log(`Found ${cards.length} cards on whiteboard "${wbName}".`);
+    const regularCards = cards.filter(c => c.type === 'card');
+    const pdfCards = cards.filter(c => c.type === 'pdfCard');
+    console.log(`Found ${regularCards.length} cards and ${pdfCards.length} PDF cards on whiteboard "${wbName}".`);
+    if (sections.length > 0) {
+        console.log(`Found ${sections.length} sections: ${sections.map(s => '"' + s.title + '"').join(', ')}`);
+    }
 
     // Determine output directory
     const targetDir = outputDir
@@ -288,39 +331,129 @@ async function cmdExport(whiteboardId, keyword, outputDir) {
 
         try {
             process.stdout.write(`${progress} Exporting: ${displayTitle}...`);
-            const content = getObject(card.id, 'card');
+            let mdContent = '';
 
-            // Extract only the card content (strip XML wrapper and metadata)
-            let mdContent = content;
+            if (card.type === 'pdfCard') {
+                // Handle PDF card
+                if (card.totalPages === 0) {
+                    console.log(' SKIPPED (PDF not yet parsed in Heptabase)');
+                    failed++;
+                    continue;
+                }
+                // Fetch PDF pages in batches of 10
+                const pageBatchSize = 10;
+                const allPageContent = [];
+                for (let p = 1; p <= card.totalPages; p += pageBatchSize) {
+                    const endPage = Math.min(p + pageBatchSize - 1, card.totalPages);
+                    const pageContent = getPdfPages(card.id, p, endPage);
+                    allPageContent.push(pageContent);
+                }
+                let rawPdf = allPageContent.join('\n\n');
 
-            // Method 1: extract from <chunk> tags if present
-            const chunkMatch = content.match(/<chunk[^>]*>([\s\S]*?)<\/chunk>/g);
-            if (chunkMatch) {
-                mdContent = chunkMatch
-                    .map(c => c.replace(/<\/?chunk[^>]*>/g, '').trim())
-                    .join('\n\n');
+                // Clean PDF content: extract text from <chunk> tags
+                const pdfChunks = rawPdf.match(/<chunk[^>]*>([\s\S]*?)<\/chunk>/g);
+                if (pdfChunks) {
+                    const cleanedChunks = pdfChunks
+                        .filter(c => {
+                            // Don't skip chunks that only contain images if we want to show placeholders
+                            const inner = c.replace(/<\/?chunk[^>]*>/g, '').trim();
+                            return inner.length > 0;
+                        })
+                        .map(c => {
+                            let text = c.replace(/<\/?chunk[^>]*>/g, '').trim();
+                            // Convert image tags to placeholders
+                            text = text.replace(/<image[^>]+fileId="([^"]+)"[^>]*\/?>/g, '\n\n> 📷 *[Image Placeholder: $1]*\n\n');
+                            // Clean up self-closing images without fileId if any
+                            text = text.replace(/<image[^>]*\/?>/g, '\n\n> 📷 *[Image Placeholder]*\n\n');
+                            // Convert simple HTML tables to text
+                            text = text.replace(/<table>[\s\S]*?<\/table>/g, (tbl) => {
+                                const rows = tbl.match(/<tr>[\s\S]*?<\/tr>/g) || [];
+                                return rows.map(row => {
+                                    const cells = row.match(/<td[^>]*>([\s\S]*?)<\/td>/g) || [];
+                                    return cells.map(cell => cell.replace(/<\/?td[^>]*>/g, '').trim()).filter(Boolean).join(' | ');
+                                }).filter(Boolean).join('\n');
+                            });
+                            // Clean remaining HTML entities and tags
+                            text = text.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+                            text = text.replace(/<[^>]+>/g, '');
+                            // Remove "Captions:" and "Footnotes:" labels (usually empty for PDF)
+                            text = text.replace(/^Captions:\s*$/gm, '').replace(/^Footnotes:\s*$/gm, '');
+                            return text.trim();
+                        })
+                        .filter(t => t.length > 0);
+                    rawPdf = cleanedChunks.join('\n\n');
+                }
+
+                // Strip remaining API metadata
+                rawPdf = rawPdf
+                    .replace(/<pdfCard[^>]*>/g, '')
+                    .replace(/<\/pdfCard>/g, '')
+                    .replace(/^PDF pages content retrieved successfully\.\s*$/gm, '')
+                    .replace(/^IMPORTANT - Understanding the format:\s*$/gm, '')
+                    .replace(/^- Content is formatted in XML.*$/gm, '')
+                    .replace(/^- XML tags and attributes.*$/gm, '')
+                    .replace(/^- Content may be split into chunks.*$/gm, '')
+                    .replace(/^- NEVER expose XML formatting.*$/gm, '')
+                    .replace(/^- Present information naturally.*$/gm, '')
+                    .replace(/^- Results are formatted.*$/gm, '')
+                    .replace(/^,\s*,\s*\)\s*$/gm, '')    // residual ", , )" line
+                    .replace(/^---\s*$/gm, '')
+                    .replace(/^\s*\n{3,}/gm, '\n\n')
+                    .trim();
+
+                mdContent = `# ${displayTitle}\n\n> Source: PDF (${card.totalPages} pages)\n\n${rawPdf}`;
+            } else {
+                // Handle regular card
+                const content = getObject(card.id, 'card');
+
+                // Extract only the card content (strip XML wrapper and metadata)
+                mdContent = content;
+
+                // Method 1: extract from <chunk> tags if present
+                const chunkMatch = content.match(/<chunk[^>]*>([\s\S]*?)<\/chunk>/g);
+                if (chunkMatch) {
+                    mdContent = chunkMatch
+                        .map(c => c.replace(/<\/?chunk[^>]*>/g, '').trim())
+                        .join('\n\n');
+                }
+
+                // Strip remaining XML tags and API metadata
+                mdContent = mdContent
+                    .replace(/<image[^>]+fileId="([^"]+)"[^>]*\/?>/g, '\n\n> 📷 *[Image Placeholder: $1]*\n\n')
+                    .replace(/<image[^>]*\/?>/g, '\n\n> 📷 *[Image Placeholder]*\n\n')
+                    .replace(/<card[^>]*>/g, '')        // remove <card> open tags
+                    .replace(/<\/card>/g, '')            // remove </card> close tags
+                    .replace(/<mention[^>]*\/>/g, '')    // remove <mention /> tags
+                    .replace(/^.*METADATA MARKERS.*$/gm, '')  // remove metadata lines
+                    .replace(/^.*NEVER expose XML.*$/gm, '')
+                    .replace(/^.*Present information naturally.*$/gm, '')
+                    .replace(/^.*Content may be split.*$/gm, '')
+                    .replace(/^.*XML tags and attributes.*$/gm, '')
+                    .replace(/^.*\(id, index, type.*$/gm, '')
+                    .replace(/^,\s*<title>.*$/gm, '')    // remove ", <title>, <content>)" lines
+                    .replace(/^\s*\n{3,}/gm, '\n\n')     // collapse excessive blank lines
+                    .trim();
             }
 
-            // Strip remaining XML tags and API metadata
-            mdContent = mdContent
-                .replace(/<card[^>]*>/g, '')        // remove <card> open tags
-                .replace(/<\/card>/g, '')            // remove </card> close tags
-                .replace(/<mention[^>]*\/>/g, '')    // remove <mention /> tags
-                .replace(/^.*METADATA MARKERS.*$/gm, '')  // remove metadata lines
-                .replace(/^.*NEVER expose XML.*$/gm, '')
-                .replace(/^.*Present information naturally.*$/gm, '')
-                .replace(/^.*Content may be split.*$/gm, '')
-                .replace(/^.*XML tags and attributes.*$/gm, '')
-                .replace(/^.*\(id, index, type.*$/gm, '')
-                .replace(/^,\s*<title>.*$/gm, '')    // remove ", <title>, <content>)" lines
-                .replace(/^\s*\n{3,}/gm, '\n\n')     // collapse excessive blank lines
-                .trim();
-
             const filename = sanitizeFilename(displayTitle) + '.md';
-            const filePath = path.join(targetDir, filename);
+
+            // Determine subdirectory based on section membership
+            const sectionTitle = objectToSection[card.id];
+            let cardDir = targetDir;
+            let relPath = filename;
+            if (sectionTitle) {
+                const sectionFolder = sanitizeFilename(sectionTitle);
+                cardDir = path.join(targetDir, sectionFolder);
+                relPath = sectionFolder + '/' + filename;
+                if (!fs.existsSync(cardDir)) {
+                    fs.mkdirSync(cardDir, { recursive: true });
+                }
+            }
+
+            const filePath = path.join(cardDir, filename);
             fs.writeFileSync(filePath, mdContent, 'utf8');
 
-            exportedCards.push({ title: displayTitle, filename });
+            exportedCards.push({ title: displayTitle, filename, relPath, section: sectionTitle || null });
             success++;
             console.log(' OK');
         } catch (err) {
@@ -334,10 +467,41 @@ async function cmdExport(whiteboardId, keyword, outputDir) {
     let indexContent = `# ${wbName}\n\n`;
     indexContent += `> Exported on ${now} from Heptabase whiteboard\n`;
     indexContent += `> Total cards: ${exportedCards.length}\n\n`;
-    indexContent += `## Cards\n\n`;
-    exportedCards.forEach((card, i) => {
-        indexContent += `${i + 1}. [${card.title}](./${card.filename})\n`;
+
+    // Group by section
+    const unsectioned = exportedCards.filter(c => !c.section);
+    const sectionGroups = {};
+    exportedCards.forEach(c => {
+        if (c.section) {
+            if (!sectionGroups[c.section]) sectionGroups[c.section] = [];
+            sectionGroups[c.section].push(c);
+        }
     });
+
+    // List sections first
+    for (const sec of sections) {
+        const group = sectionGroups[sec.title];
+        if (group && group.length > 0) {
+            indexContent += `## 📁 ${sec.title}\n\n`;
+            group.forEach((card, i) => {
+                indexContent += `${i + 1}. [${card.title}](./${card.relPath})\n`;
+            });
+            indexContent += `\n`;
+        }
+    }
+
+    // Then unsectioned cards
+    if (unsectioned.length > 0) {
+        if (sections.length > 0) {
+            indexContent += `## Other Cards\n\n`;
+        } else {
+            indexContent += `## Cards\n\n`;
+        }
+        unsectioned.forEach((card, i) => {
+            indexContent += `${i + 1}. [${card.title}](./${card.relPath})\n`;
+        });
+    }
+
     fs.writeFileSync(path.join(targetDir, '_index.md'), indexContent, 'utf8');
 
     console.log(`\n\u2705 Export complete!`);

@@ -1,0 +1,250 @@
+Full object content retrieved successfully.
+
+IMPORTANT - Understanding the format:
+- Content is formatted in XML with metadata tags (e.g., <object>, <chunk>, <title>, <content>)
+- XML tags and attributes (id, index, type, etc.) are METADATA MARKERS for your reference only
+- Content may be split into chunks for internal processing—this is transparent to the user
+- NEVER expose XML formatting, chunk indices, object IDs, or any technical details to the user
+- Present information naturally as if reading a seamless document
+
+<card id="cb2ede4f-3ed5-4b9a-b13a-f608cf02b5bb" title="2026年方向調整" totalChunks=5 >
+<chunk index=0 >
+# 2026年方向調整
+</chunk>
+<chunk index=1 >
+### 大方向
+
+1. 建築專業知識
+
+  - 營建生命週期
+
+    - <mention type="whiteboard" id="8b611473-1cb2-4f26-8b46-90232dc9c7fa" name="AR-Process_營建(建築)生命週期工作流程與項目" />
+
+  - 室內裝修
+
+    - <mention type="whiteboard" id="69e1b1a6-a371-4200-a4a5-08fad7ab4139" name="AR-Certificate_建築物室內裝修工程管理乙級技術士" />
+
+    - 裝修小五郎
+
+  - 都市更新
+
+    - <mention type="section" id="0bccaf02-128f-4d0d-b735-1549eae43d14" title="都市計畫法＋都市更新條例" />
+
+  - 施工流程
+
+    - <mention type="section" id="75547cf2-c094-446c-ba6b-018fedde2517" title="久年線上教育訓練(EIP)" />
+
+    - <mention type="section" id="2e1ba115-ff6b-4095-b415-5deb6bdc91aa" title="營造&amp;機電&amp;室裝" />
+
+    - <mention type="section" id="6ff3352c-1305-4558-a36c-0c0f5fc40b6e" title="建築&amp;室內設計" />
+
+  - 建築法規
+
+    - <mention type="whiteboard" id="cfa7c4fb-7d84-4c3d-9db8-ff2f58296e47" name="AR-Certificate_高考建築師" />
+
+    - <mention type="section" id="8d2ba6ac-f326-438c-b9c2-678e1fe7b644" title="營建法令法規" />
+
+      - <mention type="card" id="857b1a98-de79-4434-aade-1e700d16b6af" title="台灣建築法規" />
+
+        - 可以直接搜尋關鍵字，很方便
+
+      - <mention type="whiteboard" id="5e1c3dbb-9eee-4df5-9235-d3b99255d428" name="AR-Standard_建築技術規則" />
+
+        - <mention type="pdfCard" id="45abdfbf-d517-4554-a63f-65bf3edfa9d8" title="《3D圖解建築技術規則》謝仰泰" />可以3D的角度去解析建築
+
+1. 軟體專業知識
+
+  - AutoCAD
+
+    - <mention type="whiteboard" id="1fadfe17-7f3b-47bd-b17d-3a626bcde99d" name="AR-BIM_AutoCADMCP" />
+
+  - Revit
+
+    - 情境思考(搭配施工等...)
+
+    - 內建功能結合Dynamo(一半Revit，一半Dynamo)
+
+    - <mention type="whiteboard" id="0f5ab46c-0df6-4c68-81a0-f3186dfc3572" name="AR-BIM_RevitMCP" />
+
+  - Rhino
+
+  - Grasshopper
+
+  - RIR
+
+  - Dynamo
+
+    - 拆解節點，思考各種情境
+
+    - <mention type="whiteboard" id="e8448f04-6e77-4551-a73c-c620822ded3f" name="AR-BIM_Dynamo開發(個人)" />
+
+    - <mention type="whiteboard" id="6cfda1ab-52fa-4b1c-a131-c25512619218" name="AR-BIM_Dynamo彙整" />
+
+  - Python
+
+    - 基礎開始，開始
+
+    - <mention type="whiteboard" id="77990d69-e98c-4575-b702-e037bf977a57" name="AR-BIM_Dynamo Python" />
+
+  - Heptabase
+
+    - 有更好的方式可以連接?減少重複資訊為首要
+
+      - 拆解資料方式
+
+      - @的輸入
+
+      - TAG連結
+
+      - 串聯方式?
+
+      - 色塊分類?
+
+    - 如何存資料?
+
+      - Google瀏覽器外掛
+
+      - PDF(Z-library)
+
+  - AI工具
+
+    - 工具輔助
+
+      - ChatGPT
+
+        - 如何問對問題?
+
+      - Claude
+
+      - Gemini
+
+      - Deepseekmake
+
+      - Deepseek
+
+      - Heptabase
+
+      - TimeTree
+
+      - Google
+
+      - Copytranslator
+
+      - Line社群
+
+      - make
+
+      - IPAD
+
+      - Linkedin
+</chunk>
+<chunk index=2 >
+1. 語言學習
+
+  - 英文
+
+    - 聽說讀寫
+
+      - 感覺自己卡在發音或拆解字不懂，導致在閱讀上(軟體或文件)或有點卡卡，並竟不是什麼都能用翻譯軟體，一個一個找也很累的
+
+      - 發音網站>可以把發音下載下來>加入單字卡片
+
+      - 回歸<mention type="whiteboard" id="1a5e0a41-beff-4a96-9926-05811ccbadaa" name="Word UP多益只想考600分" />
+
+      - 找APP學習(YT搜尋
+
+1. 時間管理
+
+  - 怎麼分配時間?
+
+    - 一天上班八小時09:00-18:00
+
+    - 我下班要運動、看電子書、陪<mention type="card" id="89b5bf72-bbb6-4903-96d8-300d95507e98" title="黃琳捷" />講電話
+
+  - 看現有電子書
+
+  - 找Yutube統整
+
+  - 看書(Z-library找書)
+
+  - 專注度，專注在一個東西的時間控制
+
+    - 心流
+
+1. 複盤計畫
+
+  - 一周檢核一次?禮拜幾檢核?
+
+  - 做事的習慣調整
+</chunk>
+<chunk index=3 >
+1. 心靈雞湯
+
+  - 感情經營
+
+  - 旅遊規劃
+
+  - 生活風格
+
+  - 心態調整
+
+    - 有逃避心態?要正視事情
+
+      - 要有成就感
+
+  - 正能量
+
+    - 運動?
+
+    - 畫圖?
+
+    - 看景旅遊?
+
+  - 使用東西的習慣
+
+  - 說話技巧
+
+    - 口說練習 看鏡子
+
+    - 組織邏輯
+
+  - 要會問問題
+
+    - 
+
+  - 認識自己 自己最想要的是什麼?
+
+    - 人生方向、職涯目標是什麼，自己也想不明白？用 3 個提問，重新認識自己
+
+      - 你的大腦，有一半時間在神遊！想提高專注力，每天做 2 個健腦操
+
+        - 深度工作 vs. 淺薄工作，差在哪？高生產力工作者「梳理」時間的祕訣
+
+      - 你抓的資訊是垃圾或寶藏？3要點判別出真正有用的資料
+
+    - <mention type="section" id="c8d319c2-dac2-4010-a42f-b91b5807e245" title="Part 1 畫出專屬你的人生地圖──從自己出發" />
+
+    - <mention type="section" id="0f5968b1-4271-4bc2-a7e4-f28869c480ca" title="Part 2 先想像終點，才能規劃路徑──制定目標" />
+
+    - <mention type="section" id="51278f88-6e8b-483b-8c61-a00113a2d358" title="Part 3 保持動力的三種方法──內在動能" />
+
+    - <mention type="section" id="1b76b516-e1dd-47d8-9cb5-13eb7784d2ca" title="Part 4 啟程後的循環式優化──回顧與檢討" />
+
+    - <mention type="section" id="bfd1d3c2-7f9b-49fc-8c5d-7e7687fd0b05" title="Part 5 遇到叉路的選擇與勇氣──相信自己" />
+</chunk>
+<chunk index=4 >
+---
+
+- 共同邏輯
+
+  - 該如何執行???
+
+  - 看到東西先閱讀大目標
+
+    - OK在拆解
+
+  - 看影片輔助吧!
+
+    - 在影片中有不懂的名詞或流程，延伸至Heptabase做心智圖釐清
+</chunk>
+</card>

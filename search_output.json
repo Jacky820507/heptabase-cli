@@ -1,0 +1,664 @@
+Search results below. Each object shows a preview with title and partial content.
+
+IMPORTANT - Understanding the format:
+- Results are formatted in XML with metadata tags (e.g., <object>, <chunk>, <title>)
+- XML tags and attributes (id, index, type, etc.) are METADATA MARKERS for your reference only
+- Content may be split into chunks for processing—present information seamlessly to the user
+- NEVER mention XML formatting, chunk indices, or technical details to the user
+- When presenting results, use natural language: "I found X cards about Y" not "object id 123 chunk 0-2"
+
+NEXT STEPS:
+- Use getObject with the object id to retrieve complete content of relevant objects
+  - Only when the object has the "hasMore" flag
+- If objects reference whiteboards that sound relevant, consider using searchWhiteboards or getWhiteboardWithObjects
+
+<searchResult query="2026年方向調整" totalResults=17 >
+<card id="087383d2-c179-44e9-a952-5d56077f24e2" title="2025年方向調整" totalChunks=5 hasMore >
+<chunk index=0 >
+# 2025年方向調整
+</chunk>
+<chunk index=1 >
+### 大方向
+
+1. 建築專業知識
+
+  - 營建生命週期
+
+    - <mention type="whiteboard" id="8b611473-1cb2-4f26-8b46-90232dc9c7fa" />
+
+  - 室內裝修
+
+    - <mention type="whiteboard" id="69e1b1a6-a371-4200-a4a5-08fad7ab4139" />
+
+    - 裝修小五郎
+
+  - 都市更新
+
+    - <mention type="section" id="0bccaf02-128f-4d0d-b735-1549eae43d14" />
+
+  - 施工流程
+
+    - <mention type="section" id="75547cf2-c094-446c-ba6b-018fedde2517" />
+
+    - <mention type="section" id="2e1ba115-ff6b-4095-b415-5deb6bdc91aa" />
+
+    - <mention type="section" id="6ff3352c-1305-4558-a36c-0c0f5fc40b6e" />
+
+  - 建築法規
+
+    - <mention type="whiteboard" id="cfa7c4fb-7d84-4c3d-9db8-ff2f58296e47" />
+
+    - <mention type="section" id="8d2ba6ac-f326-438c-b9c2-678e1fe7b644" />
+
+      - <mention type="card" id="857b1a98-de79-4434-aade-1e700d16b6af" />
+
+        - 可以直接搜尋關鍵字，很方便
+
+      - <mention type="whiteboard" id="5e1c3dbb-9eee-4df5-9235-d3b99255d428" />
+
+        - <mention type="pdfCard" id="45abdfbf-d517-4554-a63f-65bf3edfa9d8" />可以3D的角度去解析建築
+
+1. 軟體專業知識
+
+  - Revit
+
+    - 情境思考(搭配施工等...)
+
+    - 內建功能結合Dynamo(一半Revit，一半Dynamo)
+
+  - Rhino
+
+  - Grasshopper
+
+  - RIR
+
+  - Dynamo
+
+    - 拆解節點，思考各種情境
+
+    - <mention type="whiteboard" id="e8448f04-6e77-4551-a73c-c620822ded3f" />
+
+    - <mention type="whiteboard" id="6cfda1ab-52fa-4b1c-a131-c25512619218" />
+
+  - Python
+
+    - 基礎開始，開始
+
+    - <mention type="whiteboard" id="77990d69-e98c-4575-b702-e037bf977a57" />
+
+  - Heptabase
+
+    - 有更好的方式可以連接?減少重複資訊為首要
+
+      - 拆解資料方式
+
+      - @的輸入
+
+      - TAG連結
+
+      - 串聯方式?
+
+      - 色塊分類?
+
+    - 如何存資料?
+
+      - Google瀏覽器外掛
+
+      - PDF(Z-library)
+
+  - AI工具
+
+    - 工具輔助
+
+      - ChatGPT
+
+        - 如何問對問題?
+
+      - Claude
+
+      - Deepseekmake
+
+      - Deepseek
+
+      - Heptabase
+
+      - TimeTree
+
+      - Google
+
+      - Copytranslator
+
+      - Line社群
+
+      - Readwise?
+
+      - make
+
+      - IPAD
+
+      - Linkedin
+</chunk>
+<chunk index=2 >
+1. 語言學習
+
+  - 英文
+
+    - 聽說讀寫
+
+      - 感覺自己卡在發音或拆解字不懂，導致在閱讀上(軟體或文件)或有點卡卡，並竟不是什麼都能用翻譯軟體，一個一個找也很累的
+
+      - 發音網站>可以把發音下載下來>加入單字卡片
+
+      - 回歸<mention type="whiteboard" id="1a5e0a41-beff-4a96-9926-05811ccbadaa" />
+
+      - 找APP學習(YT搜尋
+
+1. 時間管理
+
+  - 怎麼分配時間?
+
+    - 一天上班八小時09:00-18:00
+
+    - 我下班要運動、看電子書、陪<mention type="card" id="89b5bf72-bbb6-4903-96d8-300d95507e98" />講電話
+
+  - 看現有電子書
+
+  - 找Yutube統整
+
+  - 看書(Z-library找書)
+
+  - 專注度，專注在一個東西的時間控制
+
+    - 心流
+
+1. 複盤計畫
+
+  - 一周檢核一次?禮拜幾檢核?
+
+  - 做事的習慣調整
+</chunk>
+<chunk index=4 >
+---
+
+- 共同邏輯
+
+  - 該如何執行???
+
+  - 看到東西先閱讀大目標
+
+    - OK在拆解
+
+  - 看影片輔助吧!
+
+    - 在影片中有不懂的名詞或流程，延伸至Heptabase做心智圖釐清
+</chunk>
+<whiteboard id="b7031ce0-47ad-42d0-93e0-b002adc4bd20" name="00_WIP工作誌" isPreview />
+</card>
+<card id="1708c881-cc82-49b5-90fb-a68da392abd1" title="修改/Modification" totalChunks=1 >
+<chunk index=0 >
+# 修改/Modification
+</chunk>
+<whiteboard id="76d76322-ec09-438e-8dff-d59a3f4020a1" name="AR-建築名詞英文縮寫" isPreview />
+</card>
+<card id="18f115bd-c8f1-4f3a-8ae9-0eac1bacc29d" title="26.混凝土養護計畫" totalChunks=1 >
+<chunk index=0 >
+# 26.混凝土養護計畫
+</chunk>
+</card>
+<card id="53188f3c-ecd3-499f-9fcd-f6bc64b1ff2d" title="排水方向檢討" totalChunks=1 >
+<chunk index=0 >
+# 排水方向檢討
+
+<image id="6e54d400-3a88-4fad-8417-98243acbc3c6" fileId="18cbd523-7ada-473d-9c9e-39463f916ac6" />
+
+- 因應版面結構洩水方向，微調版面高程
+</chunk>
+<whiteboard id="f969d4fb-c3e2-4875-a3a7-71baf0184fd6" name="AR-Knowledge_施工計畫及面檢核要項-1FL高程檢討及施工規劃" isPreview />
+</card>
+<card id="558c64a4-40a7-4b51-b390-9b4d00d331af" title="Revit參考平面的方向" totalChunks=1 >
+<chunk index=0 >
+# Revit參考平面的方向
+
+- 在 Revit中，面 (Plane) 是由點及面的法向量所定義，因此在視圖中，繪製參考平面時，繪製的起點及終點，會決定參考平面的 "方向" ，起點至終點的方向為圖中線段繪製方向，面的法向量就是面的外側方向。
+
+- 
+
+
+
+- 在製作需要用到連接器 (Connector) 的 MEP 族群時，放置連接器時所選的面或參考平面的方向，會決定連接器的方向。
+</chunk>
+<whiteboard id="8483f1b3-afb1-4056-8aab-1edd03cda183" name="AR_Q_營建專業問題解答集" isPreview />
+</card>
+<card id="57369646-6364-4998-b66e-8c690dc93ecd" title="20241021 DL修改" totalChunks=1 >
+<chunk index=0 >
+# 20241021 DL修改
+
+- U:\Studio_C\Proj_Data\2023\23068NT (HKUST - High Performance Computational Facility)\DRAWING\CD\ISSUED\20241020_Markup for QS
+
+<image id="52163d9f-9c89-489a-9297-f7da1a912e6e" fileId="a3582a7a-c8f6-4772-9f37-e12e22cff815" />
+
+  - DL-213開始改
+</chunk>
+<whiteboard id="09a05a1e-6775-4cf3-b568-021ed6bab6c9" name="AR-RLP-BIM_UST數據中心(23068NT)" isPreview />
+</card>
+<card id="5c425d4c-300b-4ea4-8dad-fdad40cf3032" title="REVIT_DR_26_ELEVATION" totalChunks=1 >
+<chunk index=0 >
+# REVIT_DR_26_ELEVATION
+</chunk>
+<whiteboard id="38a9c446-6ca1-4623-938d-3295e6b3e11c" name="AR-RLP_05 Common Modelling Function for HK Projects" isPreview />
+</card>
+<card id="5f7e80b4-d4cf-4ae6-9c02-6ac2d5e5238c" title="「Node」Vector.AngleAboutAxis/夾角方向" totalChunks=3 >
+<chunk index=0 >
+# 「**Node」**Vector.AngleAboutAxis/夾角方向
+
+<image id="1676ee77-17c7-43b9-9371-f8ff47617a21" fileId="164b70d9-8749-4331-b583-f167738ba58c" />
+
+<image id="5543e365-d246-45be-a8e4-865d68999991" fileId="dd53f0a5-6ddb-4441-aad7-04d0a1658dd1" />
+
+描述
+
+傳回兩個向量之間的夾角，範圍從 0 到 360 度。它使用旋轉軸來決定角度的方向。
+
+Vector.AngleAboutAxis (otherVector: Vector, rotationAxis: Vector): double
+
+品類
+
+Geometry.Vector.Actions
+
+輸入
+
+**vector**
+Autodesk.DesignScript.Geometry.Vector
+
+**otherVector**
+其他向量
+
+Vector
+
+**rotationAxis**
+旋轉軸
+
+Vector
+
+輸出
+
+**double**
+傳回提供的向量之間的角度 (以 0 到 360 的度數表示)
+
+---
+</chunk>
+<chunk index=1 >
+## In Depth
+
+AngleAboutAxis 將傳回兩個向量之間圍繞旋轉軸的角度測量值（從 0 到 360 度）。在下面的範例中，兩個向量之間的角度是圍繞 Z 軸測量的。調整 Z 仰角和旋轉度滑桿以查看它們如何影響最終的角度測量。向量表示為線。
+
+---
+</chunk>
+<chunk index=2 >
+## Example File
+
+<image id="84a6a5e3-b89a-40e4-85bb-57b5543307b9" fileId="dec2ee80-f93d-4038-8705-0eece0eb3725" />
+</chunk>
+<whiteboard id="47bca7b3-9e58-40a4-aeec-5d9846ccd340" name="Geometry" isPreview />
+</card>
+<card id="615a2339-e7c1-4522-b2ef-255678dbe734" title="「Node」CoordinateSystem.Scale1D/基準點和2個點選點單向調整比例" totalChunks=1 >
+<chunk index=0 >
+# 「**Node」**CoordinateSystem.Scale1D/基準點和2個點選點單向調整比例
+
+<image id="1fde10f4-8c39-4f56-b276-17cfddd96ea8" fileId="2dbbf9c4-275f-44c5-9b7e-bf27d88bf054" />
+
+<image id="c3307da7-4171-4a2c-8de5-21d5119d09b0" fileId="f04dc501-dda1-41d0-a534-db3e8ae0b8d6" />
+
+- **透過基準點和2個點選點單向調整比例。比例軸是由基準點和 pick0 之間的 直線來定義。**
+
+- **輸入**
+
+**coordinatesystem: CoordinateSystem**
+
+**basePoint : Point**
+
+**from:Point**
+
+**to : Point**
+
+- **輸出**
+
+**CoordinateSystem**
+</chunk>
+<whiteboard id="47bca7b3-9e58-40a4-aeec-5d9846ccd340" name="Geometry" isPreview />
+</card>
+<card id="73f77972-cc8c-4ad3-9b8f-922b6cc472f9" title="20028LI 修正標註(37. Slab Edge Plans)" totalChunks=1 >
+<chunk index=0 >
+# 20028LI 修正標註(37. Slab Edge Plans)
+
+- Revit路徑
+
+  - U:\Studio_K\PROJ_DATA\2020\20028LI\DRAWING\BIM\02_Revit Model\AWE2_RLP_AANCD_AR_NE_SHEET
+
+- PDF參考
+
+  - U:\Studio_K\PROJ_DATA\2020\20028LI\DRAWING\BIM\11_PDF\Reference\Tender\20230915 Full Set Drawings\37. Slab Edge Plans
+
+- PDF做好放這
+
+  - U:\Studio_K\PROJ_DATA\2020\20028LI\DRAWING\BIM\11_PDF\20240422_Tender_All Pages_Checked\37. Slab Edge Plans
+
+
+</chunk>
+<whiteboard id="1b7b2d97-d7c9-408d-8d75-f4ecb15ae5cb" name="AR-RLP-BIM_20028LI AWE2香港機場體育館(Revit2020)" isPreview />
+</card>
+<card id="8e2fd38a-cccf-43b5-a85b-0dec25e311ae" title="客變調整" totalChunks=1 >
+<chunk index=0 >
+# 客變調整
+
+- 管理版次及修正內容記錄
+
+  - <mention type="card" id="9790674c-4730-4bab-8a89-4d2e6e3a85ea" />
+
+- 有沒有更好的方法修改標準層
+
+  - <mention type="card" id="beebdaaa-b08b-424a-959e-bef88747448e" />
+
+- <mention type="card" id="c81fee97-0ec7-46a5-ad18-eca74001a356" />
+</chunk>
+<whiteboard id="541b26f5-2e02-436c-9f9e-271abc67657b" name="AR-JY-BIM-久年凱風快晴" isPreview />
+</card>
+<card id="a350e823-d67a-417f-bb53-c304285d1090" title="20241105 DL調整(WIP)" totalChunks=1 >
+<chunk index=0 >
+# 20241105 DL調整(WIP)
+
+- PDF標註，綠色=M3，紅色=DR
+
+  - 先改廁所元件
+
+    - 鏡子表現法更改
+
+<image id="c0d18078-c2b1-4783-95d5-7d381fd94839" fileId="81bc95a7-d275-4398-8ed1-c67d993093b0" />
+
+- U:\Studio_C\Proj_Data\2023\23068NT (HKUST - High Performance Computational Facility)\BIM\02_Model\04_Archive\20241028
+
+- U:\Studio_C\Proj_Data\2023\23068NT (HKUST - High Performance Computational Facility)\DRAWING\CD\DRAFT\_Markup for TPO\20241030\DL-Combine.pdf
+</chunk>
+<whiteboard id="09a05a1e-6775-4cf3-b568-021ed6bab6c9" name="AR-RLP-BIM_UST數據中心(23068NT)" isPreview />
+</card>
+<card id="ab6a06af-2a4a-4d1b-a453-9756bdec6cbb" title="「Node」CoordinateSystem.Scale2D/基準點和2個點選點雙向調整比例" totalChunks=1 >
+<chunk index=0 >
+# 「**Node」**CoordinateSystem.Scale2D/基準點和2個點選點雙向調整比例
+
+<image id="a33d9f7e-6b78-47ef-b387-b2c6b8f78be6" fileId="e94b655a-389e-4b15-bcf3-fa8f250bb61d" />
+
+<image id="4ab723db-4983-40f1-9ffb-effae9de162a" fileId="b2057b6b-8592-42d7-b0a4-538dfc1a28dd" />
+
+- **透過基準點和2個點選點雙向調整比例。兩個點選點會投影至基準平面,以便判定 2D 比例係數**
+
+- **輸入**
+
+**coordinatesystem: CoordinateSystem**
+
+**basePlane: Plane**
+
+**from : Point**
+
+**to : Point**
+
+- **輸出**
+
+**CoordinateSystem**
+</chunk>
+<whiteboard id="47bca7b3-9e58-40a4-aeec-5d9846ccd340" name="Geometry" isPreview />
+</card>
+<card id="cb2ede4f-3ed5-4b9a-b13a-f608cf02b5bb" title="2026年方向調整" totalChunks=5 hasMore >
+<chunk index=0 >
+# 2026年方向調整
+</chunk>
+<chunk index=1 >
+### 大方向
+
+1. 建築專業知識
+
+  - 營建生命週期
+
+    - <mention type="whiteboard" id="8b611473-1cb2-4f26-8b46-90232dc9c7fa" />
+
+  - 室內裝修
+
+    - <mention type="whiteboard" id="69e1b1a6-a371-4200-a4a5-08fad7ab4139" />
+
+    - 裝修小五郎
+
+  - 都市更新
+
+    - <mention type="section" id="0bccaf02-128f-4d0d-b735-1549eae43d14" />
+
+  - 施工流程
+
+    - <mention type="section" id="75547cf2-c094-446c-ba6b-018fedde2517" />
+
+    - <mention type="section" id="2e1ba115-ff6b-4095-b415-5deb6bdc91aa" />
+
+    - <mention type="section" id="6ff3352c-1305-4558-a36c-0c0f5fc40b6e" />
+
+  - 建築法規
+
+    - <mention type="whiteboard" id="cfa7c4fb-7d84-4c3d-9db8-ff2f58296e47" />
+
+    - <mention type="section" id="8d2ba6ac-f326-438c-b9c2-678e1fe7b644" />
+
+      - <mention type="card" id="857b1a98-de79-4434-aade-1e700d16b6af" />
+
+        - 可以直接搜尋關鍵字，很方便
+
+      - <mention type="whiteboard" id="5e1c3dbb-9eee-4df5-9235-d3b99255d428" />
+
+        - <mention type="pdfCard" id="45abdfbf-d517-4554-a63f-65bf3edfa9d8" />可以3D的角度去解析建築
+
+1. 軟體專業知識
+
+  - AutoCAD
+
+    - <mention type="whiteboard" id="1fadfe17-7f3b-47bd-b17d-3a626bcde99d" />
+
+  - Revit
+
+    - 情境思考(搭配施工等...)
+
+    - 內建功能結合Dynamo(一半Revit，一半Dynamo)
+
+    - <mention type="whiteboard" id="0f5ab46c-0df6-4c68-81a0-f3186dfc3572" />
+
+  - Rhino
+
+  - Grasshopper
+
+  - RIR
+
+  - Dynamo
+
+    - 拆解節點，思考各種情境
+
+    - <mention type="whiteboard" id="e8448f04-6e77-4551-a73c-c620822ded3f" />
+
+    - <mention type="whiteboard" id="6cfda1ab-52fa-4b1c-a131-c25512619218" />
+
+  - Python
+
+    - 基礎開始，開始
+
+    - <mention type="whiteboard" id="77990d69-e98c-4575-b702-e037bf977a57" />
+
+  - Heptabase
+
+    - 有更好的方式可以連接?減少重複資訊為首要
+
+      - 拆解資料方式
+
+      - @的輸入
+
+      - TAG連結
+
+      - 串聯方式?
+
+      - 色塊分類?
+
+    - 如何存資料?
+
+      - Google瀏覽器外掛
+
+      - PDF(Z-library)
+
+  - AI工具
+
+    - 工具輔助
+
+      - ChatGPT
+
+        - 如何問對問題?
+
+      - Claude
+
+      - Gemini
+
+      - Deepseekmake
+
+      - Deepseek
+
+      - Heptabase
+
+      - TimeTree
+
+      - Google
+
+      - Copytranslator
+
+      - Line社群
+
+      - make
+
+      - IPAD
+
+      - Linkedin
+</chunk>
+<chunk index=4 >
+---
+
+- 共同邏輯
+
+  - 該如何執行???
+
+  - 看到東西先閱讀大目標
+
+    - OK在拆解
+
+  - 看影片輔助吧!
+
+    - 在影片中有不懂的名詞或流程，延伸至Heptabase做心智圖釐清
+</chunk>
+<whiteboard id="b7031ce0-47ad-42d0-93e0-b002adc4bd20" name="00_WIP工作誌" isPreview />
+</card>
+<card id="cc72ce88-33dc-43af-9c3c-f31bc8b9fc71" title="20250425_U PARK潘技師開會" totalChunks=2 >
+<chunk index=0 >
+# 20250425_U PARK潘技師開會
+
+- [x] 請<mention type="card" id="f43ebbf5-3c1b-4c5e-b934-ce58d6690b8f" />、<mention type="card" id="8c0c3f30-77c4-4207-b641-c02ad5f2079a" /><mention type="journal" date="2025-04-28" />交<mention type="card" id="ec96ec2e-4182-4255-9eba-6b47b6198f01" />園區道路配置圖
+
+- [x] 請<mention type="card" id="f43ebbf5-3c1b-4c5e-b934-ce58d6690b8f" />、<mention type="card" id="8c0c3f30-77c4-4207-b641-c02ad5f2079a" /><mention type="journal" date="2025-04-30" />交<mention type="card" id="ec96ec2e-4182-4255-9eba-6b47b6198f01" />水保計畫書及公文
+
+- [x] 請<mention type="card" id="f43ebbf5-3c1b-4c5e-b934-ce58d6690b8f" />、<mention type="card" id="8c0c3f30-77c4-4207-b641-c02ad5f2079a" /><mention type="journal" date="2025-05-06" />切圖圖說回覆(<mention type="card" id="950ad124-a907-4a46-b60f-ac42b00a18da" /><mention type="journal" date="2025-05-02" />提供給技師)
+
+  - <mention type="card" id="8e27706b-fd0d-49a0-88d9-640a5e2fc4db" />
+
+    - <mention type="pdfCard" id="d018ecab-751c-42c4-ab65-4b6b774b0d1d" />
+
+      - 這版圖說不能作為提供給業主的圖說版本， 請直接更新需修正或刪除的內容 ，勿以圖上標註審查意見回覆方式處理。
+
+1.需地範圍請更新後提供CAD檔，供建築更新。
+
+2. 刪除非聯外道路工程範圍圖說 ，如:"路燈平面配置圖(二)、(三)"。
+
+3.刪除"六、聯外道路排水推進工程"圖說。
+</chunk>
+<chunk index=1 >
+- [x] 請<mention type="card" id="f43ebbf5-3c1b-4c5e-b934-ce58d6690b8f" />、<mention type="card" id="8c0c3f30-77c4-4207-b641-c02ad5f2079a" /><mention type="journal" date="2025-05-09" />交<mention type="card" id="ec96ec2e-4182-4255-9eba-6b47b6198f01" />預算+數量
+
+---
+
+@All 可以幫忙確認一下道路斷面的變化嗎？
+
+南側的道路感覺與匯入道路會有一些人行道的位置問題
+</chunk>
+<whiteboard id="654dae73-c6fe-42f3-8229-e14b94969f7e" name="AR_SINO_0702B(地盤)+0721B(建築_桃園市 U PARK 智匯產業園區" isPreview />
+<whiteboard id="86e18192-88e6-4572-b2f6-c08629cc53a4" name="U PARK_第二十一次業主會議(20250424)" isPreview />
+</card>
+<card id="d95b907c-f4d1-4b85-bd32-2c4923b70477" title="空調方式" totalChunks=2 >
+<chunk index=0 >
+# 空調方式
+
+此卡片與「空調計畫」及「空調機器」關聯密切，主要聚焦於不同空調系統的運作原理與適用情境：
+
+- **一對一分離式**：一台室外機對應一台室內機。適合獨立房間，配置最單純。
+
+- **一對多（多聯式）分離式**：一台室外機對應多台室內機。優點是節省室外機安裝空間，但若室外機故障，所有室內機都會停擺。
+
+- **中央空調 (VRF/VRV 系統)**：變頻多聯式系統，是目前商辦及高端住宅的主流。透過智慧控制，能精準調節冷媒流量，達到分區控溫與節能的效果。
+
+- **中央空調 (冰水主機系統)**：透過大型冰水主機製造冰水，再由泵浦將冰水送至各樓層的送風機（風機盤管），吹出冷氣。適合大型、長時間運轉的商業空間。
+</chunk>
+<chunk index=1 >
+- **全熱交換器**：通常與空調系統搭配使用，在引入室外新鮮空氣的同時，透過熱交換回收室內冷氣或暖氣的能量，達到換氣又節能的目的。
+</chunk>
+<whiteboard id="2b791991-a14a-4219-86e1-87985c830f26" name="AR-Book_史上最強!建築現場施工全解" isPreview />
+</card>
+<card id="f9c25c25-2393-46ed-9d2b-8551e77c9617" title="20250114 UST GBP修改" totalChunks=2 >
+<chunk index=0 >
+# 20250114 UST GBP修改
+
+- 模型路徑
+
+  - U:\Studio_C\Proj_Data\2023\23068NT (HKUST - High Performance Computational Facility)\BIM\02_Model\01_WIP\
+
+- GBP圖說路徑
+
+  - U:\Studio_C\Proj_Data\2023\23068NT (HKUST - High Performance Computational Facility)\DRAWING\SUB\GBP\20241218_GBP 2nd Amendment\Draft\Markup\20250113_GBP_hat_r2.pdf
+
+- GBP-09~GBP-10兩張圖說藍色的Markup處理
+
+  - 坡道和旁邊樓板顯示紫色
+
+<image id="dd2bf98c-200f-47d1-8d02-005b9178c05b" fileId="c57b1ac2-6f57-4135-8deb-e9f75514ffb7" />
+
+  - 導盲磚顯示白色
+
+  - 用假的標籤打上4R
+
+<image id="eac0ffa4-65fd-43c9-87d5-c2b26d008338" fileId="3a0b8b6d-c520-4f3e-9527-37d4f051fd68" />
+
+---
+
+- 1.各層Door tag 及sill height檢查(高量顯示門為200mm 其餘門未有curb需要隱藏地板線)，需確認150H. C.C. CURB的字樣箭頭是否有指向正確之位置
+
+<image id="f39d9cb4-dc81-4346-be82-32b2a955f27d" fileId="f21d7666-7414-425b-be54-730f90b75318" />
+
+2. 2-4F 平面圖Louvre請用Plan region顯示出來(藍色亮顯的三樘)
+
+<image id="fef28e85-d63e-4c04-aad2-5491a44f190a" fileId="ceab76ef-463e-4890-8540-db829877ca55" />
+
+3.室內Layout有調整過 確認各層的牆面標註是否缺失，如果與舊圖不同劃紅線標示，也需確認各層的每個空間是否都有保留SFL及FFL
+
+4.各層之Concrete plinth位置及大小已經更新完成，請協助確認顏色範圍
+
+<image id="c0204824-356c-4505-80d7-b8514f1ea23e" fileId="e2273ff1-eb71-458a-b74d-44866293f76e" />
+
+舊圖：
+
+U:\Studio_C\Proj_Data\2023\23068NT (HKUST - High Performance Computational Facility)\DRAWING\SUB\GBP\20241218_GBP 2nd Amendment\20240724 GBP 1st Amendment Approval drawings_checking.pdf
+
+參考Markup：
+
+U:\Studio_C\Proj_Data\2023\23068NT (HKUST - High Performance Computational Facility)\DRAWING\SUB\GBP\20241218_GBP 2nd Amendment\Draft\Markup\20250113_GBP_hat_r2.pdf
+</chunk>
+<chunk index=1 >
+
+</chunk>
+<whiteboard id="09a05a1e-6775-4cf3-b568-021ed6bab6c9" name="AR-RLP-BIM_UST數據中心(23068NT)" isPreview />
+</card>
+</searchResult>

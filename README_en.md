@@ -105,8 +105,20 @@ heptabase append-to-journal --content "Some entry"
 # heptabase organize <days>
 heptabase organize 7
 
-# Export whiteboard as local Markdown files
-heptabase export --keyword "whiteboard name" --output-dir ./backup
+### Export Whiteboard (Export)
+
+Full export of whiteboard cards to local Markdown files. Ideal for backups or LLM-assisted workflows.
+
+1. `heptabase export --keyword "whiteboard name"` — Search and prepare export data
+2. **Auto-Grouping**: Automatically creates subfolders based on whiteboard **Sections**
+3. **Media Handling**: Extract PDF content and insert image placeholders
+4. **Auto-Indexing**: Generates a grouped `_index.md` for navigation
+5. **Content Cleaning**: Strips XML tags and converts HTML tables to Markdown
+
+```bash
+# Example command
+heptabase export --keyword "Project Alpha" --output-dir ./backup
+```
 ```
 
 List all commands:

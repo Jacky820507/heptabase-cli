@@ -1,7 +1,7 @@
 class HeptabaseCli < Formula
   desc "CLI for your personal Heptabase knowledge base"
-  homepage "https://github.com/madeyexz/heptabase-cli"
-  url "https://github.com/madeyexz/heptabase-cli/releases/download/v0.1.0/heptabase"
+  homepage "https://github.com/Jacky820507/heptabase-cli"
+  url "https://github.com/Jacky820507/heptabase-cli/releases/download/v0.1.0/heptabase"
   sha256 "c3d275bd3cdb32719bf62dcef7f12afe255c1ebaf444197278cd5dea4a4ee895"
   license "MIT"
 
