@@ -35,7 +35,7 @@ After install, use `heptabase` for all commands.
 
 ```bash
 mkdir -p ~/.local/bin
-curl -L https://github.com/madeyexz/heptabase-cli/releases/latest/download/heptabase -o ~/.local/bin/heptabase
+curl -L https://github.com/Jacky820507/heptabase-cli/releases/latest/download/heptabase -o ~/.local/bin/heptabase
 chmod +x ~/.local/bin/heptabase
 ~/.local/bin/heptabase --help
 ```
@@ -50,7 +50,7 @@ source ~/.zshrc
 Optional system-wide install:
 
 ```bash
-curl -L https://github.com/madeyexz/heptabase-cli/releases/latest/download/heptabase -o heptabase
+curl -L https://github.com/Jacky820507/heptabase-cli/releases/latest/download/heptabase -o heptabase
 chmod +x heptabase
 sudo mv heptabase /usr/local/bin/
 ```
@@ -104,6 +104,9 @@ heptabase append-to-journal --content "Some entry"
 # AI Auto-Organization
 # heptabase organize <days>
 heptabase organize 7
+
+# Export whiteboard as local Markdown files
+heptabase export --keyword "whiteboard name" --output-dir ./backup
 ```
 
 List all commands:
@@ -127,6 +130,7 @@ Supported output formats (`--output`): `text` (default), `json`, `markdown`, `ra
 - `search-pdf-content`
 - `get-pdf-pages`
 - `organize` (AI Auto-Organization)
+- `export` (Export whiteboard cards as Markdown)
 
 ## Troubleshooting
 

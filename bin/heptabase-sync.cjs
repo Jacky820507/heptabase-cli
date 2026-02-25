@@ -42,6 +42,41 @@ function searchWhiteboards(keywords) {
     return JSON.parse(result);
 }
 
+/** Call heptabase-cli.ts get-whiteboard-with-objects */
+function getWhiteboardWithObjects(whiteboardId) {
+    const tsx = getTsxPath();
+    const script = path.join(__dirname, "..", "heptabase-cli.ts");
+    const result = execFileSync("node", [tsx, script, "get-whiteboard-with-objects", "--whiteboard-id", whiteboardId, "--output", "raw"], {
+        encoding: "utf8",
+        maxBuffer: 50 * 1024 * 1024, // 50MB buffer for large whiteboards
+    });
+    const parsed = JSON.parse(result);
+    return parsed.raw.content.find(c => c.type === 'text')?.text || "";
+}
+
+/** Call heptabase-cli.ts get-object */
+function getObject(objectId, objectType) {
+    const tsx = getTsxPath();
+    const script = path.join(__dirname, "..", "heptabase-cli.ts");
+    const result = execFileSync("node", [tsx, script, "get-object", "--object-id", objectId, "--object-type", objectType, "--output", "raw"], {
+        encoding: "utf8",
+        maxBuffer: 10 * 1024 * 1024,
+    });
+    const parsed = JSON.parse(result);
+    return parsed.raw.content.find(c => c.type === 'text')?.text || "";
+}
+
+/** Sanitize a string for use as a filename */
+function sanitizeFilename(name) {
+    return name
+        .replace(/[<>:"\/\\|?*]/g, '_')  // replace illegal chars
+        .replace(/\s+/g, '_')             // replace whitespace
+        .replace(/_+/g, '_')              // collapse multiple underscores
+        .replace(/^_|_$/g, '')            // trim leading/trailing underscores
+        .slice(0, 100);                   // limit length
+}
+
+
 /** Parse YAML frontmatter from a markdown file (simple key: value parser) */
 function parseFrontmatter(raw) {
     const match = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/);
@@ -185,6 +220,131 @@ async function cmdOrganize(days = 7) {
     }
 }
 
+async function cmdExport(whiteboardId, keyword, outputDir) {
+    // Step 0: If keyword is provided, search for the whiteboard first
+    if (!whiteboardId && keyword) {
+        console.log(`Searching for whiteboard: "${keyword}"...`);
+        const tsx = getTsxPath();
+        const script = path.join(__dirname, "..", "heptabase-cli.ts");
+        const result = execFileSync("node", [tsx, script, "search-whiteboards", "--keywords", keyword, "--output", "raw"], {
+            encoding: "utf8",
+        });
+        const parsed = JSON.parse(result);
+        const rawText = parsed.raw.content.find(c => c.type === 'text')?.text || "";
+        const wbMatch = rawText.match(/<whiteboard\s+id="([^"]+)"\s+name="([^"]+)"/);
+        if (!wbMatch) {
+            console.error('Error: No whiteboard found matching the keyword.');
+            process.exit(1);
+        }
+        whiteboardId = wbMatch[1];
+        console.log(`Found whiteboard: "${wbMatch[2]}" (${whiteboardId})`);
+    }
+
+    if (!whiteboardId) {
+        console.error('Error: Please provide --whiteboard-id or --keyword.');
+        process.exit(1);
+    }
+
+    console.log(`\nFetching whiteboard structure...`);
+    const wbText = getWhiteboardWithObjects(whiteboardId);
+
+    // Parse whiteboard name
+    const nameMatch = wbText.match(/<whiteboard[^>]+name="([^"]+)"/);
+    const wbName = nameMatch ? nameMatch[1] : 'unnamed-whiteboard';
+
+    // Parse all cards from the XML
+    const cardRegex = /<card\s+id="([^"]+)"\s+title="([^"]*)"/g;
+    const cards = [];
+    let match;
+    while ((match = cardRegex.exec(wbText)) !== null) {
+        cards.push({ id: match[1], title: match[2] });
+    }
+
+    if (cards.length === 0) {
+        console.log('No cards found on this whiteboard.');
+        return;
+    }
+
+    console.log(`Found ${cards.length} cards on whiteboard "${wbName}".`);
+
+    // Determine output directory
+    const targetDir = outputDir
+        ? path.resolve(outputDir)
+        : path.resolve('export', sanitizeFilename(wbName));
+
+    if (!fs.existsSync(targetDir)) {
+        fs.mkdirSync(targetDir, { recursive: true });
+    }
+
+    // Fetch and write each card
+    const exportedCards = [];
+    let success = 0;
+    let failed = 0;
+
+    for (let i = 0; i < cards.length; i++) {
+        const card = cards[i];
+        const progress = `[${i + 1}/${cards.length}]`;
+        const displayTitle = card.title || `untitled-${card.id.slice(0, 8)}`;
+
+        try {
+            process.stdout.write(`${progress} Exporting: ${displayTitle}...`);
+            const content = getObject(card.id, 'card');
+
+            // Extract only the card content (strip XML wrapper and metadata)
+            let mdContent = content;
+
+            // Method 1: extract from <chunk> tags if present
+            const chunkMatch = content.match(/<chunk[^>]*>([\s\S]*?)<\/chunk>/g);
+            if (chunkMatch) {
+                mdContent = chunkMatch
+                    .map(c => c.replace(/<\/?chunk[^>]*>/g, '').trim())
+                    .join('\n\n');
+            }
+
+            // Strip remaining XML tags and API metadata
+            mdContent = mdContent
+                .replace(/<card[^>]*>/g, '')        // remove <card> open tags
+                .replace(/<\/card>/g, '')            // remove </card> close tags
+                .replace(/<mention[^>]*\/>/g, '')    // remove <mention /> tags
+                .replace(/^.*METADATA MARKERS.*$/gm, '')  // remove metadata lines
+                .replace(/^.*NEVER expose XML.*$/gm, '')
+                .replace(/^.*Present information naturally.*$/gm, '')
+                .replace(/^.*Content may be split.*$/gm, '')
+                .replace(/^.*XML tags and attributes.*$/gm, '')
+                .replace(/^.*\(id, index, type.*$/gm, '')
+                .replace(/^,\s*<title>.*$/gm, '')    // remove ", <title>, <content>)" lines
+                .replace(/^\s*\n{3,}/gm, '\n\n')     // collapse excessive blank lines
+                .trim();
+
+            const filename = sanitizeFilename(displayTitle) + '.md';
+            const filePath = path.join(targetDir, filename);
+            fs.writeFileSync(filePath, mdContent, 'utf8');
+
+            exportedCards.push({ title: displayTitle, filename });
+            success++;
+            console.log(' OK');
+        } catch (err) {
+            failed++;
+            console.log(` FAILED (${err.message})`);
+        }
+    }
+
+    // Generate _index.md
+    const now = new Date().toISOString().split('T')[0];
+    let indexContent = `# ${wbName}\n\n`;
+    indexContent += `> Exported on ${now} from Heptabase whiteboard\n`;
+    indexContent += `> Total cards: ${exportedCards.length}\n\n`;
+    indexContent += `## Cards\n\n`;
+    exportedCards.forEach((card, i) => {
+        indexContent += `${i + 1}. [${card.title}](./${card.filename})\n`;
+    });
+    fs.writeFileSync(path.join(targetDir, '_index.md'), indexContent, 'utf8');
+
+    console.log(`\n\u2705 Export complete!`);
+    console.log(`   Location: ${targetDir}`);
+    console.log(`   Success: ${success}, Failed: ${failed}, Total: ${cards.length}`);
+}
+
 // ── CLI ──────────────────────────────────────────────────────────────────────
 
 function printHelp() {
@@ -196,10 +356,17 @@ Usage:
   heptabase domain-all <dir>       Sync all domain SOPs in a directory
   heptabase lessons <GEMINI.md>    Sync lessons learned section
   heptabase organize [--days N]    Analyze recent journals for organization
+  heptabase export [options]       Export whiteboard cards as local Markdown files
+
+Export options:
+  --whiteboard-id <id>    Whiteboard ID to export
+  --keyword <text>        Search whiteboard by keyword
+  --output-dir <path>     Output directory (default: ./export/<whiteboard-name>/)
 
 Examples:
   heptabase domain e:\\RevitMCP\\domain\\detail-component-sync.md
   heptabase organize 7
+  heptabase export --keyword "Dynamo" --output-dir E:\\Backup\\Dynamo
 `);
 }
 
@@ -242,6 +409,16 @@ switch (subcommand) {
             days = parseInt(args[1]);
         }
         cmdOrganize(isNaN(days) ? 7 : days);
+        break;
+    case "export":
+        const exportWbId = getFlagValue("--whiteboard-id");
+        const exportKeyword = getFlagValue("--keyword");
+        const exportOutputDir = getFlagValue("--output-dir");
+        if (!exportWbId && !exportKeyword) {
+            console.error("Error: please provide --whiteboard-id or --keyword");
+            process.exit(1);
+        }
+        cmdExport(exportWbId, exportKeyword, exportOutputDir);
         break;
     default:
         console.error(`Unknown subcommand: '${subcommand}'`);

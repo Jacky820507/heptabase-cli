@@ -58,6 +58,7 @@ bunx heptabase-cli --help
 | `search-pdf-content` | 在 PDF 中搜尋關鍵字 |
 | `get-pdf-pages` | 讀取 PDF 指定頁碼內容 |
 | `heptabase organize` | 歸納日誌主題並建議存放白板 |
+| `heptabase export` | 匯出白板中的卡片為本地 Markdown 檔案 |
 
 ---
 
@@ -160,6 +161,16 @@ heptabase get-pdf-pages \
 3. AI 生成「整理提案」：歸納主題並匹配建議白板
 4. 根據建議手動將卡片移動至對應白板
 
+### 匯出白板 (Export)
+
+```bash
+# 用關鍵字搜尋並匯出
+heptabase export --keyword "白板名稱" --output-dir ./backup
+
+# 用白板 ID 匯出
+heptabase export --whiteboard-id <id> --output-dir E:\Backup
+```
+
 ---
 
 ## 輸出格式
@@ -197,4 +208,4 @@ heptabase get-pdf-pages \
 ## 更多資訊
 
 - [Heptabase MCP 官方文件](https://support.heptabase.com/en/articles/12679581-how-to-use-heptabase-mcp)
-- [GitHub 專案頁面](https://github.com/madeyexz/heptabase-cli)
+- [GitHub 專案頁面](https://github.com/Jacky820507/heptabase-cli)
