@@ -5,8 +5,8 @@ const path = require("path");
 const script = path.join(__dirname, "..", "heptabase-cli.ts");
 const args = process.argv.slice(2);
 
-// Handle 'organize' and 'export' subcommands by redirecting to heptabase-sync.cjs
-if (args[0] === "organize" || args[0] === "export") {
+// Handle 'organize', 'export', and 'hub' subcommands by redirecting to heptabase-sync.cjs
+if (args[0] === "organize" || args[0] === "export" || args[0] === "hub") {
   const syncScript = path.join(__dirname, "heptabase-sync.cjs");
   try {
     execFileSync("node", [syncScript, ...args], { stdio: "inherit" });

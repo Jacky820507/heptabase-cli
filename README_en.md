@@ -119,6 +119,20 @@ Full export of whiteboard cards to local Markdown files. Ideal for backups or LL
 # Example command
 heptabase export --keyword "Project Alpha" --output-dir ./backup
 ```
+
+### Auto-Generate Hub (Hub)
+
+Quickly create a navigation index card when you have scattered topics across multiple whiteboards.
+
+1. `heptabase hub <topic_keyword>` — Search for all related whiteboards
+2. **Auto-Aggregation**: Counts cards, PDFs, and Sections for each whiteboard
+3. **Link Creation**: Generates Markdown content with `→ 白板『Name』` markers
+4. **Save Card**: Automatically creates a new Hub card in Heptabase
+
+```bash
+# Example command
+heptabase hub Dynamo
+```
 ```
 
 List all commands:
@@ -143,6 +157,7 @@ Supported output formats (`--output`): `text` (default), `json`, `markdown`, `ra
 - `get-pdf-pages`
 - `organize` (AI Auto-Organization)
 - `export` (Export whiteboard cards as Markdown)
+- `hub` (Auto-generate a Hub navigation card)
 
 ## Troubleshooting
 

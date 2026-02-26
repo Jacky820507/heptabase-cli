@@ -59,6 +59,7 @@ bunx heptabase-cli --help
 | `get-pdf-pages` | 讀取 PDF 指定頁碼內容 |
 | `heptabase organize` | 歸納日誌主題並建議存放白板 |
 | `heptabase export` | 匯出白板中的卡片為本地 Markdown 檔案 |
+| `heptabase hub` | 自動生成特定主題的 Hub 導航卡片 |
 
 ---
 
@@ -129,6 +130,10 @@ heptabase get-pdf-pages \
   --pdf-card-id [PDF卡片ID] \
   --start-page-number 1 \
   --end-page-number 5
+
+# 自動生成主題 Hub 卡片
+# 搜尋所有相關白板並彙整統計資訊
+heptabase hub Dynamo
 ```
 
 ---
@@ -174,6 +179,20 @@ heptabase get-pdf-pages \
 ```bash
 # 範例指令
 heptabase export --keyword "建築設計" --output-dir ./backup
+```
+
+### 自動生成主題 Hub (Hub)
+
+當你在多個白板中有分散的主題時，可以快速建立一個導航索引卡。
+
+1. `heptabase hub <主題關鍵字>` — 搜尋所有相關白板
+2. **自動彙整**：統計每個白板的卡片數、PDF 數與區塊 (Sections)
+3. **建立連結**：生成含 `→ 白板『名稱』` 的 Markdown 內容
+4. **儲存卡片**：自動在 Heptabase 中建立一張新的 Hub 卡片
+
+```bash
+# 範例指令
+heptabase hub Dynamo
 ```
 
 ---

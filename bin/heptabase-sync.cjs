@@ -233,6 +233,244 @@ async function cmdOrganize(days = 7) {
     }
 }
 
+/** Search whiteboards and return raw text content (for XML parsing) */
+function searchWhiteboardsRaw(keywords) {
+    const tsx = getTsxPath();
+    const script = path.join(__dirname, "..", "heptabase-cli.ts");
+    const result = execFileSync("node", [tsx, script, "search-whiteboards", "--keywords", keywords, "--output", "raw"], {
+        encoding: "utf8",
+        maxBuffer: 10 * 1024 * 1024,
+    });
+    const parsed = JSON.parse(result);
+    return parsed.raw.content.find(c => c.type === 'text')?.text || "";
+}
+
+async function cmdHub(topic) {
+    console.log(`\n🗂️  Generating Hub card for topic: "${topic}"...\n`);
+
+    // 1. Search for related whiteboards
+    console.log("Searching for related whiteboards...");
+    let searchText;
+    try {
+        searchText = searchWhiteboardsRaw(topic);
+    } catch (err) {
+        console.error(`Error searching whiteboards: ${err.message}`);
+        return;
+    }
+
+    // 2. Parse whiteboard IDs and names from XML
+    const wbRegex = /<whiteboard\s+id="([^"]+)"\s+name="([^"]*)"/g;
+    const whiteboards = [];
+    let match;
+    while ((match = wbRegex.exec(searchText)) !== null) {
+        whiteboards.push({ id: match[1], name: match[2] });
+    }
+
+    if (whiteboards.length === 0) {
+        console.log(`No whiteboards found for topic "${topic}".`);
+        return;
+    }
+
+    console.log(`Found ${whiteboards.length} whiteboards. Fetching details...\n`);
+
+    // 3. For each whiteboard, fetch structure info
+    const results = [];
+    for (let i = 0; i < whiteboards.length; i++) {
+        const wb = whiteboards[i];
+        const progress = `[${i + 1}/${whiteboards.length}]`;
+        process.stdout.write(`${progress} ${wb.name}...`);
+        try {
+            const wbText = getWhiteboardWithObjects(wb.id);
+
+            // Extract card titles (handle escaped quotes in title attribute)
+            const cardRegex = /<card\s+id="([^"]+)"\s+title="((?:[^"\\]|\\.)*)"/g;
+            const cards = [];
+            let cMatch;
+            while ((cMatch = cardRegex.exec(wbText)) !== null) {
+                cards.push({ id: cMatch[1], title: cMatch[2].replace(/\\"/g, '"').replace(/\\\\/g, '\\'), type: 'card' });
+            }
+
+            // Extract PDF card titles (handle escaped quotes in title attribute)
+            const pdfRegex = /<pdfCard\s+id="([^"]+)"\s+title="((?:[^"\\]|\\.)*)"/g;
+            while ((cMatch = pdfRegex.exec(wbText)) !== null) {
+                cards.push({ id: cMatch[1], title: cMatch[2].replace(/\\"/g, '"').replace(/\\\\/g, '\\'), type: 'pdfCard' });
+            }
+
+            // Extract sections with objectIds
+            const sectionRegex = /<section\s+title="([^"]*)"\s+objectIds="([^"]*)"/g;
+            const sections = [];
+            const objectToSection = {};
+            let sMatch;
+            while ((sMatch = sectionRegex.exec(wbText)) !== null) {
+                const sTitle = sMatch[1];
+                const objectIds = sMatch[2].split(',').map(id => id.trim()).filter(Boolean);
+                sections.push({ title: sTitle, objectIds });
+                objectIds.forEach(id => { objectToSection[id] = sTitle; });
+            }
+
+            // Group cards by section
+            const sectionCards = {};  // sectionTitle -> [card]
+            const unsectioned = [];
+            for (const card of cards) {
+                const sec = objectToSection[card.id];
+                if (sec) {
+                    if (!sectionCards[sec]) sectionCards[sec] = [];
+                    sectionCards[sec].push(card);
+                } else {
+                    unsectioned.push(card);
+                }
+            }
+
+            results.push({
+                ...wb,
+                cardCount: cards.filter(c => c.type === 'card').length,
+                pdfCount: cards.filter(c => c.type === 'pdfCard').length,
+                sections: sections.map(s => s.title),
+                sectionCards,
+                unsectioned
+            });
+            console.log(` OK (${cards.length} items, ${sections.length} sections)`);
+        } catch (err) {
+            // Still include the whiteboard but without details
+            results.push({ ...wb, cardCount: 0, pdfCount: 0, sections: [], sectionCards: {}, unsectioned: [], error: err.message });
+            console.log(` WARN (${err.message})`);
+        }
+    }
+
+    // 4. Generate Hub card content
+    const now = new Date().toISOString().split('T')[0];
+    let hubContent = `# 🗂️ ${topic} Hub\n\n`;
+    hubContent += `> Auto-generated hub card for topic "${topic}"\n`;
+    hubContent += `> Found ${results.length} related whiteboards\n`;
+    hubContent += `> Generated on ${now}\n\n`;
+    hubContent += `## 📋 Related Whiteboards\n\n`;
+
+    for (const wb of results) {
+        hubContent += `### → 白板『${wb.name}』\n`;
+        const stats = [];
+        if (wb.cardCount > 0) stats.push(`${wb.cardCount} cards`);
+        if (wb.pdfCount > 0) stats.push(`${wb.pdfCount} PDFs`);
+        if (stats.length > 0) {
+            hubContent += `- 📊 ${stats.join(', ')}\n`;
+        }
+
+        // Hybrid sort: version-number aware + general natural sort
+        // - Titles starting with N.N.N or N.: version sort (1. < 1.1 < 2.)
+        // - Other titles: natural sort (Python #1 < #2 < #10, API 1 < API 6)
+        function sortCards(arr) {
+            return arr.slice().sort((a, b) => {
+                const ta = a.title || '';
+                const tb = b.title || '';
+
+                // Try version-number comparison for titles starting with N. or N.N.N
+                const va = ta.match(/^(\d+(?:\.\d+)*)\.?/);
+                const vb = tb.match(/^(\d+(?:\.\d+)*)\.?/);
+                if (va && vb) {
+                    const numsA = va[1].split('.').map(Number);
+                    const numsB = vb[1].split('.').map(Number);
+                    const vlen = Math.max(numsA.length, numsB.length);
+                    for (let i = 0; i < vlen; i++) {
+                        const na = numsA[i] ?? -1;  // missing = parent, sorts first
+                        const nb = numsB[i] ?? -1;
+                        if (na !== nb) return na - nb;
+                    }
+                    // Same version, compare remaining text
+                    return ta.substring(va[0].length).localeCompare(tb.substring(vb[0].length), 'zh-Hant');
+                }
+
+                // Fallback: sort by LAST number in title (handles API 1..6, #1..#10, etc.)
+                const lastNumA = (ta.match(/\d+/g) || []).map(Number);
+                const lastNumB = (tb.match(/\d+/g) || []).map(Number);
+                const lnA = lastNumA.length > 0 ? lastNumA[lastNumA.length - 1] : Infinity;
+                const lnB = lastNumB.length > 0 ? lastNumB[lastNumB.length - 1] : Infinity;
+                if (lnA !== lnB) return lnA - lnB;
+                return ta.localeCompare(tb, 'zh-Hant');
+            });
+        }
+
+        // Helper to render cards with prefix grouping
+        function renderCards(cardsArray, baseIndent = "  ") {
+            let out = "";
+            const prefixRegex = /^(\[[^\]]+\]|【[^】]+】|[^:：]+[:：])\s*(.*)/;
+            const groups = {};
+            const others = [];
+
+            cardsArray.forEach(c => {
+                const m = (c.title || "").match(prefixRegex);
+                if (m) {
+                    const prefix = m[1].trim();
+                    if (!groups[prefix]) groups[prefix] = [];
+                    groups[prefix].push({ ...c, displayTitle: m[2].trim() });
+                } else {
+                    others.push({ ...c, displayTitle: c.title || "(untitled)" });
+                }
+            });
+
+            // If a group has > 1 item, render it as a nested list
+            for (const [prefix, groupedCards] of Object.entries(groups)) {
+                if (groupedCards.length > 1) {
+                    out += `${baseIndent}${prefix}\n`;
+                    groupedCards.forEach(c => {
+                        const icon = c.type === 'pdfCard' ? '📄' : '📝';
+                        out += `${baseIndent}  - ${icon} ${c.displayTitle}\n`;
+                    });
+                } else {
+                    // Single item -> just render normally
+                    others.push({ ...groupedCards[0], displayTitle: (groupedCards[0].title || "(untitled)") });
+                }
+            }
+
+            // Render remaining cards
+            others.sort((a, b) => sortCards([{ title: a.title }, { title: b.title }])[0].title === a.title ? -1 : 1).forEach(c => {
+                const icon = c.type === 'pdfCard' ? '📄' : '📝';
+                out += `${baseIndent}- ${icon} ${c.displayTitle}\n`;
+            });
+
+            return out;
+        }
+
+        // List cards grouped by section (sort section titles too)
+        const sortedSections = sortCards(wb.sections.map(s => ({ title: s }))).map(s => s.title);
+        if (sortedSections.length > 0) {
+            for (const secTitle of sortedSections) {
+                const secCards = sortCards(wb.sectionCards[secTitle] || []);
+                if (secCards.length > 0) {
+                    hubContent += `- 📁 **${secTitle}**\n`;
+                    hubContent += renderCards(secCards, "  ");
+                } else {
+                    hubContent += `- 📁 ${secTitle}\n`;
+                }
+            }
+        }
+
+        // List unsectioned cards
+        if (wb.unsectioned.length > 0) {
+            const sorted = sortCards(wb.unsectioned);
+            if (wb.sections.length > 0) {
+                hubContent += `- 📂 **其他卡片**\n`;
+            }
+            hubContent += renderCards(sorted, "  ");
+        }
+
+        if (wb.error) {
+            hubContent += `- ⚠️ Could not fetch details: ${wb.error}\n`;
+        }
+        hubContent += `\n`;
+    }
+
+    // 5. Save the Hub card
+    console.log(`\nSaving Hub card to Heptabase...`);
+    try {
+        const saveResult = saveToNoteCard(hubContent);
+        console.log(`\n✅ Hub card created successfully!`);
+        console.log(`   Topic: ${topic}`);
+        console.log(`   Whiteboards: ${results.length}`);
+        console.log(`   Total cards: ${results.reduce((sum, wb) => sum + wb.cardCount, 0)}`);
+    } catch (err) {
+        console.error(`Error saving Hub card: ${err.message}`);
+    }
+}
+
 async function cmdExport(whiteboardId, keyword, outputDir) {
     // Step 0: If keyword is provided, search for the whiteboard first
     if (!whiteboardId && keyword) {
@@ -521,6 +759,7 @@ Usage:
   heptabase lessons <GEMINI.md>    Sync lessons learned section
   heptabase organize [--days N]    Analyze recent journals for organization
   heptabase export [options]       Export whiteboard cards as local Markdown files
+  heptabase hub <topic>            Auto-generate a Hub card for a topic
 
 Export options:
   --whiteboard-id <id>    Whiteboard ID to export
@@ -531,6 +770,7 @@ Examples:
   heptabase domain e:\\RevitMCP\\domain\\detail-component-sync.md
   heptabase organize 7
   heptabase export --keyword "Dynamo" --output-dir E:\\Backup\\Dynamo
+  heptabase hub Dynamo
 `);
 }
 
@@ -583,6 +823,13 @@ switch (subcommand) {
             process.exit(1);
         }
         cmdExport(exportWbId, exportKeyword, exportOutputDir);
+        break;
+    case "hub":
+        if (!args[1]) {
+            console.error("Error: please provide a topic keyword, e.g. heptabase hub Dynamo");
+            process.exit(1);
+        }
+        cmdHub(args[1]);
         break;
     default:
         console.error(`Unknown subcommand: '${subcommand}'`);
