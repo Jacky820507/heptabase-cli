@@ -746,6 +746,100 @@ async function cmdExport(whiteboardId, keyword, outputDir) {
     console.log(`   Location: ${targetDir}`);
     console.log(`   Success: ${success}, Failed: ${failed}, Total: ${cards.length}`);
 }
+async function cmdImport(dirPath) {
+    if (!fs.existsSync(dirPath) || !fs.statSync(dirPath).isDirectory()) {
+        console.error(`Error: directory not found: ${dirPath}`);
+        process.exit(1);
+    }
+
+    const baseFolderName = path.basename(path.resolve(dirPath));
+    console.log(`\n🗂️  Importing Markdown files from "${baseFolderName}"...\n`);
+
+    const mdFiles = [];
+
+    // Helper to recursively find markdown files
+    function scanDirectory(currentPath, relativePath) {
+        const items = fs.readdirSync(currentPath);
+        for (const item of items) {
+            // Skip hidden folders like .git or node_modules
+            if (item.startsWith('.') || item === 'node_modules') continue;
+
+            const fullPath = path.join(currentPath, item);
+            const stat = fs.statSync(fullPath);
+
+            if (stat.isDirectory()) {
+                scanDirectory(fullPath, path.join(relativePath, item));
+            } else if (stat.isFile() && item.toLowerCase().endsWith('.md')) {
+                // If it's a file but not _index.md
+                if (item.toLowerCase() !== '_index.md') {
+                    mdFiles.push({
+                        fullPath,
+                        relativePath,
+                        filename: item
+                    });
+                }
+            }
+        }
+    }
+
+    // Start scanning
+    scanDirectory(dirPath, '');
+
+    if (mdFiles.length === 0) {
+        console.log(`No markdown files found in ${dirPath}`);
+        return;
+    }
+
+    console.log(`Found ${mdFiles.length} markdown files. Start syncing...\n`);
+
+    let success = 0;
+    let failed = 0;
+
+    for (let i = 0; i < mdFiles.length; ++i) {
+        const file = mdFiles[i];
+        const progress = `[${i + 1}/${mdFiles.length}]`;
+        const displayPath = path.join(file.relativePath, file.filename).replace(/\\/g, '/');
+
+        process.stdout.write(`${progress} ${displayPath}...`);
+
+        try {
+            const raw = fs.readFileSync(file.fullPath, "utf8");
+            const { meta, body } = parseFrontmatter(raw);
+
+            // Determine prefix from directory structure
+            // Example: [PDF_Library/nested] Document Title
+            const prefixParts = [baseFolderName];
+            if (file.relativePath) {
+                // normalize slashes for tags
+                prefixParts.push(file.relativePath.replace(/\\/g, '/'));
+            }
+            const prefix = `[${prefixParts.join('/')}]`;
+
+            // Try to extract an existing H1 title from the body
+            let title = path.basename(file.filename, '.md');
+            let contentBody = body;
+            const h1Match = body.match(/^#\s+(.*?)$/m);
+            if (h1Match) {
+                title = h1Match[1].trim();
+                // We'll keep the H1 but prepend our prefix to it, or replace it
+                contentBody = body.replace(/^#\s+(.*?)$/m, '').trim();
+            }
+
+            const finalContent = `# ${prefix} ${title}\n\n${contentBody}`;
+
+            saveToNoteCard(finalContent);
+            console.log(" OK");
+            success++;
+        } catch (err) {
+            console.log(` FAILED (${err.message})`);
+            failed++;
+        }
+    }
+
+    console.log(`\n\u2705 Import complete!`);
+    console.log(`   Success: ${success}, Failed: ${failed}, Total: ${mdFiles.length}`);
+    console.log(`\n💡 Tip: Search for "${baseFolderName}" in Heptabase to find your imported cards and move them to a Whiteboard.`);
+}
 
 // ── CLI ──────────────────────────────────────────────────────────────────────
 
@@ -759,6 +853,7 @@ Usage:
   heptabase lessons <GEMINI.md>    Sync lessons learned section
   heptabase organize [--days N]    Analyze recent journals for organization
   heptabase export [options]       Export whiteboard cards as local Markdown files
+  heptabase import <dir>           Recursively import Markdown files from a directory
   heptabase hub <topic>            Auto-generate a Hub card for a topic
 
 Export options:
@@ -770,6 +865,7 @@ Examples:
   heptabase domain e:\\RevitMCP\\domain\\detail-component-sync.md
   heptabase organize 7
   heptabase export --keyword "Dynamo" --output-dir E:\\Backup\\Dynamo
+  heptabase import "D:\\PDF_Library"
   heptabase hub Dynamo
 `);
 }
@@ -830,6 +926,13 @@ switch (subcommand) {
             process.exit(1);
         }
         cmdHub(args[1]);
+        break;
+    case "import":
+        if (!args[1]) {
+            console.error("Error: please provide a directory path to import from, e.g. heptabase import ./my-notes");
+            process.exit(1);
+        }
+        cmdImport(path.resolve(args[1]));
         break;
     default:
         console.error(`Unknown subcommand: '${subcommand}'`);
