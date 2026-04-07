@@ -1,12 +1,14 @@
 #!/usr/bin/env node
 const { execFileSync } = require("child_process");
 const path = require("path");
+require("dotenv").config({ path: path.join(__dirname, "..", "config", ".env") });
 
 const script = path.join(__dirname, "..", "heptabase-cli.ts");
 const args = process.argv.slice(2);
 
-// Handle 'organize', 'export', and 'hub' subcommands by redirecting to heptabase-sync.cjs
-if (args[0] === "organize" || args[0] === "export" || args[0] === "hub") {
+
+// Handle 'organize', 'export', 'hub', 'import', and 'gmail-sync' subcommands by redirecting to heptabase-sync.cjs
+if (args[0] === "organize" || args[0] === "export" || args[0] === "hub" || args[0] === "import" || args[0] === "gmail-sync") {
   const syncScript = path.join(__dirname, "heptabase-sync.cjs");
   try {
     execFileSync("node", [syncScript, ...args], { stdio: "inherit" });

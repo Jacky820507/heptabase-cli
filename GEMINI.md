@@ -87,3 +87,11 @@
   1. **版本號優先**：開頭為 `2.` 或 `2.1` 的標題按版本元組比較，確保父章節在前。
   2. **末尾數字排序**：針對 `API 1`、`#10` 等模式，優先提取「最後一個數字」進行數值比較。
   3. **前綴分組渲染**：偵測 `[標籤]`、`文字:` 等前綴，自動將多個同類卡片折疊進一個不帶點的父項目中。
+
+### [L-012] Gmail API 同步與 OAuth 權杖修復
+- **規則**：Gmail API 需在本地 `config/token.json` 緩存權杖。若出現 `invalid_grant` 或 `missing credentials`，通常是因為權杖過期或路徑錯誤。
+- **實踐**：在 `gmail-sync-logic.cjs` 中實作偵測邏輯。若發生錯誤，引導使用者從 Google Cloud 下載 `credentials.json` 並手動獲取 `code`。若 Heptabase 連線失效，可從 `%USERPROFILE%\.mcp-auth\` 找回 Access Token。
+
+### [L-013] CJS 啟動器中的環境變數加載 (dotenv)
+- **規則**：在 `.cjs` 啟動器中，`require("dotenv").config()` 必須在任何調用 `execFileSync` 之前執行，且必須指定 `{ path: ... }` 以確保路徑正確連動。
+- **避坑**：Shebang (`#!`) 必須位於檔案絕對第一行。且在手動貼入代碼時，需注意 `path` 或 `fs` 是否重複宣告，否則 Node.js 會報 `SyntaxError: Identifier '...' has already been declared`。

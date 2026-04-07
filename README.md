@@ -59,6 +59,7 @@ bunx heptabase-cli --help
 | `get-pdf-pages` | 讀取 PDF 指定頁碼內容 |
 | `heptabase organize` | 歸納日誌主題並建議存放白板 |
 | `heptabase export` | 匯出白板中的卡片為本地 Markdown 檔案 |
+| `heptabase import` | 遞迴掃描資料夾並批次匯入 Markdown 檔案 |
 | `heptabase hub` | 自動生成特定主題的 Hub 導航卡片 |
 
 ---
@@ -179,6 +180,21 @@ heptabase hub Dynamo
 ```bash
 # 範例指令
 heptabase export --keyword "建築設計" --output-dir ./backup
+```
+
+### 批次匯入本地 Markdown (Import)
+
+將本地資料夾（包含子資料夾）內的 Markdown 檔案批次匯入為 Heptabase 卡片。由於 API 限制，目前無法在匯入時自動將卡片加入特定的 Whiteboard。
+
+為了方便後續整理，系統會將資料夾結構作為「標籤前綴」加在卡片標題上。
+
+1. `heptabase import <資料夾路徑>` — 掃描並匯入檔案
+2. **自動合併標題**：例如 `/docs/api/login.md` 會產生標題為 `# [docs/api] login` 的卡片
+3. **後續分類**：打開 Heptabase，搜尋 `[資料夾名稱]` 即可尋找整批匯入的卡片，再手動圈選拖入指定的 Whiteboard。
+
+```bash
+# 範例指令
+heptabase import ./my-project-notes
 ```
 
 ### 自動生成主題 Hub (Hub)

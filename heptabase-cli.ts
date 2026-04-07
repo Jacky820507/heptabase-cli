@@ -5,316 +5,316 @@ import { createRuntime, createServerProxy } from 'mcporter';
 import { createCallResult } from 'mcporter';
 
 const embeddedServer = {
-  "name": "mcp-remote",
-  "description": "Heptabase knowledge base CLI",
-  "command": {
-    "kind": "stdio",
-    "command": "npx",
-    "args": [
-      "-y",
-      "mcp-remote@latest",
-      "https://api.heptabase.com/mcp",
-      "--transport",
-      "http-only"
-    ]
-  },
-  "source": {
-    "kind": "local",
-    "path": "<adhoc>"
-  }
+	"name": "mcp-remote",
+	"description": "Heptabase knowledge base CLI",
+	"command": {
+		"kind": "stdio",
+		"command": "npx",
+		"args": [
+			"-y",
+			"mcp-remote@latest",
+			"https://api.heptabase.com/mcp",
+			"--transport",
+			"http-only"
+		]
+	},
+	"source": {
+		"kind": "local",
+		"path": "<adhoc>"
+	}
 } as const;
 const embeddedSchemas = {
-  "save_to_note_card": {
-    "type": "object",
-    "properties": {
-      "content": {
-        "type": "string",
-        "description": "Content of the card. In markdown format. Each block should be separated by an empty line. The first line should be an h1, which will be treated as the title of the card."
-      }
-    },
-    "required": [
-      "content"
-    ],
-    "additionalProperties": false
-  },
-  "append_to_journal": {
-    "type": "object",
-    "properties": {
-      "content": {
-        "type": "string",
-        "description": "Content to append to the journal. In markdown format. Each block should be separated by an empty line."
-      }
-    },
-    "required": [
-      "content"
-    ],
-    "additionalProperties": false
-  },
-  "get_journal_range": {
-    "type": "object",
-    "properties": {
-      "startDate": {
-        "type": "string",
-        "description": "The start date of the journal range (YYYY-MM-DD). Maximum 92 days between startDate and endDate."
-      },
-      "endDate": {
-        "type": "string",
-        "description": "The end date of the journal range (YYYY-MM-DD). Must be >= startDate and within 92 days of startDate."
-      }
-    },
-    "required": [
-      "startDate",
-      "endDate"
-    ],
-    "additionalProperties": false
-  },
-  "get_whiteboard_with_objects": {
-    "type": "object",
-    "properties": {
-      "whiteboardId": {
-        "type": "string",
-        "description": "The id of the whiteboard to retrieve with all its objects."
-      }
-    },
-    "required": [
-      "whiteboardId"
-    ],
-    "additionalProperties": false
-  },
-  "get_object": {
-    "type": "object",
-    "properties": {
-      "objectId": {
-        "type": "string",
-        "description": "The id of the object to retrieve."
-      },
-      "objectType": {
-        "type": "string",
-        "enum": [
-          "card",
-          "journal",
-          "videoCard",
-          "audioCard",
-          "imageCard",
-          "highlightElement",
-          "textElement",
-          "videoElement",
-          "imageElement",
-          "chat",
-          "chatMessage",
-          "chatMessagesElement",
-          "section"
-        ],
-        "description": "The type of the object. Do not use it on pdfCard."
-      }
-    },
-    "required": [
-      "objectId",
-      "objectType"
-    ],
-    "additionalProperties": false
-  },
-  "get_pdf_pages": {
-    "type": "object",
-    "properties": {
-      "pdfCardId": {
-        "type": "string",
-        "description": "The UUID of the PDF card to get pages from."
-      },
-      "startPageNumber": {
-        "type": "integer",
-        "description": "The page number to start from. (inclusive, starts from 1)"
-      },
-      "endPageNumber": {
-        "type": "integer",
-        "description": "The page number to end at. (inclusive)"
-      }
-    },
-    "required": [
-      "pdfCardId",
-      "startPageNumber",
-      "endPageNumber"
-    ],
-    "additionalProperties": false
-  },
-  "search_pdf_content": {
-    "type": "object",
-    "properties": {
-      "pdfCardId": {
-        "type": "string",
-        "description": "The UUID of the PDF card to search."
-      },
-      "keywords": {
-        "type": "array",
-        "items": {
-          "type": "string"
-        },
-        "minItems": 1,
-        "maxItems": 5,
-        "description": "No more than 5 keywords. Use varied terms, synonyms, and related concepts (e.g., [\"neural network\", \"deep learning\", \"architecture\"]). OR logic—diverse keywords = broader coverage."
-      }
-    },
-    "required": [
-      "pdfCardId",
-      "keywords"
-    ],
-    "additionalProperties": false
-  },
-  "semantic_search_objects": {
-    "type": "object",
-    "properties": {
-      "queries": {
-        "type": "array",
-        "items": {
-          "type": "string"
-        },
-        "minItems": 1,
-        "maxItems": 3,
-        "description": "Array of search queries in natural language (1-3 queries). Multiple queries from different perspectives improve coverage. Example: [\"climate change impacts\", \"environmental policy\"]."
-      },
-      "resultObjectTypes": {
-        "type": "array",
-        "items": {
-          "type": "string",
-          "enum": [
-            "card",
-            "pdfCard",
-            "mediaCard",
-            "highlightElement",
-            "journal"
-          ]
-        },
-        "minItems": 0,
-        "description": "Filter for specific object types. Pass empty array to search all types."
-      }
-    },
-    "required": [
-      "queries",
-      "resultObjectTypes"
-    ],
-    "additionalProperties": false
-  },
-  "search_whiteboards": {
-    "type": "object",
-    "properties": {
-      "keywords": {
-        "type": "array",
-        "items": {
-          "type": "string"
-        },
-        "minItems": 1,
-        "maxItems": 5,
-        "description": "1-5 keywords. Use varied terms, synonyms, and related concepts for broader coverage (OR logic). Example: [\"project management\", \"productivity\", \"workflow\"]."
-      }
-    },
-    "required": [
-      "keywords"
-    ],
-    "additionalProperties": false
-  }
+	"save_to_note_card": {
+		"type": "object",
+		"properties": {
+			"content": {
+				"type": "string",
+				"description": "Content of the card. In markdown format. Each block should be separated by an empty line. The first line should be an h1, which will be treated as the title of the card."
+			}
+		},
+		"required": [
+			"content"
+		],
+		"additionalProperties": false
+	},
+	"append_to_journal": {
+		"type": "object",
+		"properties": {
+			"content": {
+				"type": "string",
+				"description": "Content to append to the journal. In markdown format. Each block should be separated by an empty line."
+			}
+		},
+		"required": [
+			"content"
+		],
+		"additionalProperties": false
+	},
+	"get_journal_range": {
+		"type": "object",
+		"properties": {
+			"startDate": {
+				"type": "string",
+				"description": "The start date of the journal range (YYYY-MM-DD). Maximum 92 days between startDate and endDate."
+			},
+			"endDate": {
+				"type": "string",
+				"description": "The end date of the journal range (YYYY-MM-DD). Must be >= startDate and within 92 days of startDate."
+			}
+		},
+		"required": [
+			"startDate",
+			"endDate"
+		],
+		"additionalProperties": false
+	},
+	"get_whiteboard_with_objects": {
+		"type": "object",
+		"properties": {
+			"whiteboardId": {
+				"type": "string",
+				"description": "The id of the whiteboard to retrieve with all its objects."
+			}
+		},
+		"required": [
+			"whiteboardId"
+		],
+		"additionalProperties": false
+	},
+	"get_object": {
+		"type": "object",
+		"properties": {
+			"objectId": {
+				"type": "string",
+				"description": "The id of the object to retrieve."
+			},
+			"objectType": {
+				"type": "string",
+				"enum": [
+					"card",
+					"journal",
+					"videoCard",
+					"audioCard",
+					"imageCard",
+					"highlightElement",
+					"textElement",
+					"videoElement",
+					"imageElement",
+					"chat",
+					"chatMessage",
+					"chatMessagesElement",
+					"section"
+				],
+				"description": "The type of the object. Do not use it on pdfCard."
+			}
+		},
+		"required": [
+			"objectId",
+			"objectType"
+		],
+		"additionalProperties": false
+	},
+	"get_pdf_pages": {
+		"type": "object",
+		"properties": {
+			"pdfCardId": {
+				"type": "string",
+				"description": "The UUID of the PDF card to get pages from."
+			},
+			"startPageNumber": {
+				"type": "integer",
+				"description": "The page number to start from. (inclusive, starts from 1)"
+			},
+			"endPageNumber": {
+				"type": "integer",
+				"description": "The page number to end at. (inclusive)"
+			}
+		},
+		"required": [
+			"pdfCardId",
+			"startPageNumber",
+			"endPageNumber"
+		],
+		"additionalProperties": false
+	},
+	"search_pdf_content": {
+		"type": "object",
+		"properties": {
+			"pdfCardId": {
+				"type": "string",
+				"description": "The UUID of the PDF card to search."
+			},
+			"keywords": {
+				"type": "array",
+				"items": {
+					"type": "string"
+				},
+				"minItems": 1,
+				"maxItems": 5,
+				"description": "No more than 5 keywords. Use varied terms, synonyms, and related concepts (e.g., [\"neural network\", \"deep learning\", \"architecture\"]). OR logic—diverse keywords = broader coverage."
+			}
+		},
+		"required": [
+			"pdfCardId",
+			"keywords"
+		],
+		"additionalProperties": false
+	},
+	"semantic_search_objects": {
+		"type": "object",
+		"properties": {
+			"queries": {
+				"type": "array",
+				"items": {
+					"type": "string"
+				},
+				"minItems": 1,
+				"maxItems": 3,
+				"description": "Array of search queries in natural language (1-3 queries). Multiple queries from different perspectives improve coverage. Example: [\"climate change impacts\", \"environmental policy\"]."
+			},
+			"resultObjectTypes": {
+				"type": "array",
+				"items": {
+					"type": "string",
+					"enum": [
+						"card",
+						"pdfCard",
+						"mediaCard",
+						"highlightElement",
+						"journal"
+					]
+				},
+				"minItems": 0,
+				"description": "Filter for specific object types. Pass empty array to search all types."
+			}
+		},
+		"required": [
+			"queries",
+			"resultObjectTypes"
+		],
+		"additionalProperties": false
+	},
+	"search_whiteboards": {
+		"type": "object",
+		"properties": {
+			"keywords": {
+				"type": "array",
+				"items": {
+					"type": "string"
+				},
+				"minItems": 1,
+				"maxItems": 5,
+				"description": "1-5 keywords. Use varied terms, synonyms, and related concepts for broader coverage (OR logic). Example: [\"project management\", \"productivity\", \"workflow\"]."
+			}
+		},
+		"required": [
+			"keywords"
+		],
+		"additionalProperties": false
+	}
 } as const;
 const embeddedName = "mcp-remote";
 const embeddedDescription = "Heptabase knowledge base CLI";
 const generatorInfo = "Generated by mcporter@0.7.3 — https://github.com/steipete/mcporter";
 const generatorTools = [
-  {
-    "name": "save-to-note-card",
-    "description": "Save any information to a note card in the main space in Heptabase.",
-    "usage": "save-to-note-card --content <content> [--raw <json>]",
-    "flags": "--content <content> [--raw <json>]"
-  },
-  {
-    "name": "append-to-journal",
-    "description": "Append content to today's journal in Heptabase. If today's journal does not exist, it will be created.",
-    "usage": "append-to-journal --content <content> [--raw <json>]",
-    "flags": "--content <content> [--raw <json>]"
-  },
-  {
-    "name": "get-journal-range",
-    "description": "Retrieve daily journal entries within a date range (inclusive) from the user's Heptabase knowledge base.\n\nWHAT IT RETURNS:\n- Complete content for each journal entry in the specified period\n- All journal entries from startDate to endDate (inclusive)\n\nUSE WHEN:\n- User asks about their journal entries during a time period\n- User wants to see what they wrote in past days/weeks/months\n- User needs to review their daily notes\n\nIMPORTANT CONSTRAINTS:\n- Each call can retrieve at most 92 days (approximately 3 months)\n- For longer periods, make multiple calls (e.g., 4 calls for one year)\n- Dates use YYYY-MM-DD format. Both startDate and endDate are inclusive.",
-    "usage": "get-journal-range --start-date <start-date> --end-date <end-date> [--raw <json>]",
-    "flags": "--start-date <start-date> --end-date <end-date> [--raw <json>]"
-  },
-  {
-    "name": "get-whiteboard-with-objects",
-    "description": "List all objects on a whiteboard with their content from the user's Heptabase knowledge base.\n\nWHAT IT RETURNS:\n- Complete whiteboard structure showing all objects and their relationships\n- Partial content of cards, sections, text elements, mindmaps, images on the whiteboard\n- Connections between objects\n\nUSE WHEN:\n- You've already got the whiteboard id from searchWhiteboards or semanticSearchObjects\n\nHEPTABASE STRUCTURE:\n- Whiteboards are visual canvases containing multiple objects\n- Objects on the same whiteboard are typically related to the same topic",
-    "usage": "get-whiteboard-with-objects --whiteboard-id <whiteboard-id> [--raw <json>]",
-    "flags": "--whiteboard-id <whiteboard-id> [--raw <json>]"
-  },
-  {
-    "name": "get-object",
-    "description": "Retrieve the complete content of an object from the user's Heptabase knowledge base.\n\nWHAT IT RETURNS:\n- Full content of cards (notes, journals, media, highlights)\n- Complete transcripts for video/audio cards\n- All content regardless of length (no chunk limits)\n\nUSE WHEN:\n- You found relevant objects via semanticSearchObjects or getWhiteboardWithObjects and need full content\n  - Determine if you have all the content of an object by checking its \"hasMore\" flag\n- User asks about a specific object you've identified\n- You need complete information (e.g., for summarization, translation, or detailed questions)\n\nOBJECT TYPES:\n- card: Text notes\n- videoCard/audioCard/imageCard\n- journal: Daily journal entries  \n- highlightElement\n- section/textElement: whiteboard elements\n- chat/chatMessage/chatMessagesElement: Chat conversations\n\nNOTE: Do not use this on pdfCard objects since they might be too large.",
-    "usage": "get-object --object-id <object-id> --object-type <object-type:card|journal|videoCard|audioCard|imageCard|highlightElement|textElement|videoElement|imageElement|chat|chatMessage|chatMessagesElement|section> [--raw <json>]",
-    "flags": "--object-id <object-id> --object-type <object-type:card|journal|videoCard|audioCard|imageCard|highlightElement|textElement|videoElement|imageElement|chat|chatMessage|chatMessagesElement|section> [--raw <json>]"
-  },
-  {
-    "name": "get-pdf-pages",
-    "description": "Retrieve specific pages from a PDF card by page numbers from the user's Heptabase knowledge base.\n\nWHAT IT RETURNS:\n- Complete content from [startPageNumber, endPageNumber] inclusive\n- All content from the specified page range\n\nUSE WHEN:\n- You know the specific page numbers to retrieve\n- User asks for content from specific pages\n- You need complete sections after finding relevant pages via search_pdf_content\n- For summarization/translation, retrieve pages in batches\n\nNOTE: Page numbers start from 1 (not 0). You can get any number of pages you want. But if you need significantly more than 100 pages, ask user for clarification first.",
-    "usage": "get-pdf-pages --pdf-card-id <pdf-card-id> --start-page-number <start-page-number:number> --end-page-number <end-page-number:number> [--raw <json>]",
-    "flags": "--pdf-card-id <pdf-card-id> --start-page-number <start-page-number:number> --end-page-number <end-page-number:number> [--raw <json>]"
-  },
-  {
-    "name": "search-pdf-content",
-    "description": "Search within a large PDF using BM25 keyword matching (OR logic, fuzzy) from the user's Heptabase knowledge base.\n\nWHAT IT RETURNS:\n- Up to 80 ranked chunks matching the keywords\n- Expanded contiguous ranges around matching chunks for context\n\nUSE WHEN:\n- User asks about content within a PDF\n- You need to find specific information in a PDF document\n- User wants to search for keywords or topics in a PDF\n\nIMPORTANT:\n- You must first obtain the PDF card ID using other available tools (e.g., semanticSearchObjects or getObject) before calling this function\n- Use broad keywords, synonyms, and related terms to maximize coverage\n- Follow with get_pdf_pages for complete sections if needed",
-    "usage": "search-pdf-content --pdf-card-id <pdf-card-id> --keywords <keywords:value1,value2> [--raw <json>]",
-    "flags": "--pdf-card-id <pdf-card-id> --keywords <keywords:value1,value2> [--raw <json>]"
-  },
-  {
-    "name": "semantic-search-objects",
-    "description": "Find WHICH objects exist on a topic in the user's Heptabase knowledge base using hybrid search (full-text + semantic).\n\nHEPTABASE STRUCTURE:\n- Cards: Knowledge units (notes, journals, PDFs, videos, images, highlights)\n- Whiteboards: Visual canvases containing cards and other objects\n\nUSE WHEN: Discovering what content exists about a topic (e.g., \"machine learning papers\", \"project notes\")\n\nSTRATEGY:\n- Use multiple queries from different perspectives (1-3 queries)\n- Results show previews with titles and partial content\n- If you find relevant objects, use getObject to retrieve complete content\n- Returned objects may reference whiteboards they're on—use searchWhiteboards if you need to explore those whiteboards",
-    "usage": "semantic-search-objects --queries <queries:value1,value2> --result-object-types <result-object-types:card|pdfCard|mediaCard|highlightElement|journal> [--raw <json>]",
-    "flags": "--queries <queries:value1,value2> --result-object-types <result-object-types:card|pdfCard|mediaCard|highlightElement|journal> [--raw <json>]"
-  },
-  {
-    "name": "search-whiteboards",
-    "description": "Search for whiteboards by keywords in the user's Heptabase knowledge base.\n\nHEPTABASE STRUCTURE:\n- Whiteboards are visual canvases where users organize their knowledge\n- Each whiteboard contains cards, sections, text elements, mindmaps, images, and connections\n- Users typically group related content on the same whiteboard\n- Whiteboard names/titles indicate their topic or purpose\n\nUSE WHEN:\n- Looking for whiteboards on a specific topic (e.g., \"machine learning project\", \"research papers\")\n- User mentions exploring or understanding their workspace organization\n- You found objects via semanticSearchObjects that reference interesting whiteboards\n- Need to see how content is organized and connected\n\nSEARCH STRATEGY:\n- Use varied keywords, synonyms, and related concepts for better coverage\n- OR logic: diverse keywords = broader results\n- Example: [\"neural network\", \"deep learning\", \"architecture\"]\n\nNEXT STEPS:\n- Results show whiteboard titles and basic info\n- Use getWhiteboardWithObjects to retrieve full content of relevant whiteboards",
-    "usage": "search-whiteboards --keywords <keywords:value1,value2> [--raw <json>]",
-    "flags": "--keywords <keywords:value1,value2> [--raw <json>]"
-  }
+	{
+		"name": "save-to-note-card",
+		"description": "將任何資訊儲存至 Heptabase 主空間的筆記卡片中。",
+		"usage": "save-to-note-card --content <content> [--raw <json>]",
+		"flags": "--content <content> [--raw <json>]"
+	},
+	{
+		"name": "append-to-journal",
+		"description": "將內容附加至 Heptabase 今天的日記中。如果今天的日記不存在，則會自動建立。",
+		"usage": "append-to-journal --content <content> [--raw <json>]",
+		"flags": "--content <content> [--raw <json>]"
+	},
+	{
+		"name": "get-journal-range",
+		"description": "從使用者的 Heptabase 知識庫中，取得指定日期範圍內（包含首尾）的每日日記內容。\n\n回傳內容：\n- 指定期間內每篇日記的完整內容\n- startDate 到 endDate（包含）之間的所有日記\n\n使用時機：\n- 使用者詢問其特定時期的日記內容\n- 使用者想查看過去幾天/週/月的筆記\n- 使用需複習每日筆記\n\n重要限制：\n- 每次呼叫最多只能取得 92 天（約 3 個月）的資料\n- 若需更長期的資料，請進行多次呼叫（例如一年需呼叫 4 次）\n- 日期請使用 YYYY-MM-DD 格式。startDate 與 endDate 皆包含在內。",
+		"usage": "get-journal-range --start-date <start-date> --end-date <end-date> [--raw <json>]",
+		"flags": "--start-date <start-date> --end-date <end-date> [--raw <json>]"
+	},
+	{
+		"name": "get-whiteboard-with-objects",
+		"description": "列出 Heptabase 知識庫中指定白板上的所有物件及其內容。\n\n回傳內容：\n- 顯示所有物件及其關係的完整白板結構\n- 白板上卡片、Section、文字區塊、心智圖、圖片的部分內容\n- 物件之間的連接線關係\n\n使用時機：\n- 您已經透過 searchWhiteboards 或 semanticSearchObjects 取得白板 ID 時\n\nHEPTABASE 結構：\n- 白板是包含多個物件的視覺化畫布\n- 同一個白板上的物件通常與同一主題相關",
+		"usage": "get-whiteboard-with-objects --whiteboard-id <whiteboard-id> [--raw <json>]",
+		"flags": "--whiteboard-id <whiteboard-id> [--raw <json>]"
+	},
+	{
+		"name": "get-object",
+		"description": "從使用者的 Heptabase 知識庫中取得單一物件的完整內容。\n\n回傳內容：\n- 卡片（筆記、日記、媒體、螢光筆）的完整內容\n- 影片/音訊卡片的完整逐字稿\n- 不受長度限制的所有內容\n\n使用時機：\n- 透過 semanticSearchObjects 或 getWhiteboardWithObjects 找到相關物件後，需要完整內容時\n  - 可透過檢查「hasMore」標記來確認是否已取得該物件的所有內容\n- 使用者詢問您識別出的某個特定物件時\n- 需要完整資訊時（例如用於摘要、翻譯或詳細問題）\n\n物件類型：\n- card: 純文字筆記\n- videoCard/audioCard/imageCard\n- journal: 每日日記\n- highlightElement\n- section/textElement: 白板元素\n- chat/chatMessage/chatMessagesElement: 聊天對話\n\n注意：請勿將此工具用於 pdfCard 物件，因為內容可能過大。",
+		"usage": "get-object --object-id <object-id> --object-type <object-type:card|journal|videoCard|audioCard|imageCard|highlightElement|textElement|videoElement|imageElement|chat|chatMessage|chatMessagesElement|section> [--raw <json>]",
+		"flags": "--object-id <object-id> --object-type <object-type:card|journal|videoCard|audioCard|imageCard|highlightElement|textElement|videoElement|imageElement|chat|chatMessage|chatMessagesElement|section> [--raw <json>]"
+	},
+	{
+		"name": "get-pdf-pages",
+		"description": "根據頁碼從使用者的 Heptabase 知識庫中取得特定 PDF 卡片的頁面內容。\n\n回傳內容：\n- 從 [startPageNumber, endPageNumber]（包含）的完整內容\n- 指定頁面範圍內的所有內容\n\n使用時機：\n- 當您確切知道要取得哪些頁碼時\n- 使用者指定要求特定頁面的內容時\n- 透過 search_pdf_content 找到相關頁面後，需要完整的段落內容時\n- 進行摘要/翻譯時，可分批取得頁面\n\n注意：頁碼從 1 開始（而非 0）。您可以取得任意數量的頁面，但如果需要的頁數遠大於 100 頁，請先向使用者釐清需求。",
+		"usage": "get-pdf-pages --pdf-card-id <pdf-card-id> --start-page-number <start-page-number:number> --end-page-number <end-page-number:number> [--raw <json>]",
+		"flags": "--pdf-card-id <pdf-card-id> --start-page-number <start-page-number:number> --end-page-number <end-page-number:number> [--raw <json>]"
+	},
+	{
+		"name": "search-pdf-content",
+		"description": "在大型 PDF 中使用 BM25 關鍵字比對（OR 邏輯、模糊搜尋）尋找 Heptabase 知識庫內的內容。\n\n回傳內容：\n- 最多 80 個與關鍵字相符的排序區塊\n- 包含相符區塊前後的連續範圍以提供上下文\n\n使用時機：\n- 使用者詢問 PDF 內的特定內容時\n- 需要在 PDF 文件中尋找特定資訊時\n- 使用者想要在 PDF 中搜尋關鍵字或主題時\n\n重要事項：\n- 在呼叫此功能之前，必須先透過其他可用工具（例如 semanticSearchObjects 或 getObject）取得 PDF 卡片的 ID。\n- 請使用廣泛的關鍵字、同義詞和相關詞彙，以達到最大的搜尋涵蓋率。\n- 若有需要，搜完後請接著使用 get_pdf_pages 來取得完整的段落內容。",
+		"usage": "search-pdf-content --pdf-card-id <pdf-card-id> --keywords <keywords:value1,value2> [--raw <json>]",
+		"flags": "--pdf-card-id <pdf-card-id> --keywords <keywords:value1,value2> [--raw <json>]"
+	},
+	{
+		"name": "semantic-search-objects",
+		"description": "使用混合搜尋（全文檢索 + 語意搜尋）在 Heptabase 知識庫中尋找存在哪些與主題相關的物件。\n\nHEPTABASE 結構：\n- 卡片：知識單位（筆記、日記、PDF、影片、圖片、螢光筆）\n- 白板：包含卡片與其他物件的視覺化畫布\n\n使用時機：想了解系統中有哪些關於特定主題的內容時（例如：「機器學習輪文」、「專案筆記」）\n\n搜尋策略：\n- 請從不同角度使用多個查詢（1-3 個查詢）\n- 搜尋結果會顯示包含標題與部分內容的預覽\n- 如果找到相關物件，請使用 getObject 來取得完整內容\n- 回傳的物件可能會表明它隸屬於哪些白板——如果您想探索這些白板，請使用 searchWhiteboards",
+		"usage": "semantic-search-objects --queries <queries:value1,value2> --result-object-types <result-object-types:card|pdfCard|mediaCard|highlightElement|journal> [--raw <json>]",
+		"flags": "--queries <queries:value1,value2> --result-object-types <result-object-types:card|pdfCard|mediaCard|highlightElement|journal> [--raw <json>]"
+	},
+	{
+		"name": "search-whiteboards",
+		"description": "透過關鍵字在 Heptabase 知識庫中搜尋白板。\n\nHEPTABASE 結構：\n- 白板是使用者用來組織知識的視覺化畫布\n- 每個白板都包含卡片、Section、文字區塊、心智圖、圖片以及連接線\n- 使用者通常將相關內容群組在同一個白板上\n- 白板名稱/標題代表了其主題或用途\n\n使用時機：\n- 正在尋找特定主題的白板時（例如：「機器學習專案」、「研究論文」）\n- 使用者提到探索或理解他們的工作區組織時\n- 您透過 semanticSearchObjects 找到感興趣的物件且那些物件提到了某個白板時\n- 需要了解內容是如何被組織與關聯的\n\n搜尋策略：\n- 使用多樣的關鍵字、同義詞與相關概念來獲得更好的涵蓋率\n- OR 邏輯：不同的關鍵字 = 更廣泛的結果\n- 範例：[\"類神經網路\", \"深度學習\", \"架構\"]\n\n下一步：\n- 搜尋結果會顯示白板標題與基本資訊\n- 請使用 getWhiteboardWithObjects 取得相關白板的完整內容",
+		"usage": "search-whiteboards --keywords <keywords:value1,value2> [--raw <json>]",
+		"flags": "--keywords <keywords:value1,value2> [--raw <json>]"
+	}
 ] as const;
 const embeddedMetadata = {
-  "schemaVersion": 1,
-  "generatedAt": "2026-02-21T07:28:46.447Z",
-  "generator": {
-    "name": "mcporter",
-    "version": "0.7.3"
-  },
-  "server": {
-    "name": "mcp-remote",
-    "source": {
-      "kind": "local",
-      "path": "<adhoc>"
-    },
-    "definition": {
-      "name": "mcp-remote",
-      "description": "Heptabase knowledge base CLI",
-      "command": {
-        "kind": "stdio",
-        "command": "npx",
-        "args": [
-          "-y",
-          "mcp-remote@latest",
-          "https://api.heptabase.com/mcp",
-          "--transport",
-          "http-only"
-        ]
-      }
-    }
-  },
-  "artifact": {
-    "path": "",
-    "kind": "template"
-  },
-  "invocation": {
-    "serverRef": "{\"name\":\"mcp-remote\",\"description\":\"Heptabase knowledge base CLI\",\"command\":{\"kind\":\"stdio\",\"command\":\"npx\",\"args\":[\"-y\",\"mcp-remote@latest\",\"https://api.heptabase.com/mcp\",\"--transport\",\"http-only\"]},\"source\":{\"kind\":\"local\",\"path\":\"<adhoc>\"}}",
-    "configPath": "<adhoc>",
-    "runtime": "bun",
-    "bundler": "bun",
-    "outputPath": "./heptabase-cli.ts",
-    "compile": "./heptabase",
-    "timeoutMs": 30000,
-    "minify": false
-  }
+	"schemaVersion": 1,
+	"generatedAt": "2026-02-21T07:28:46.447Z",
+	"generator": {
+		"name": "mcporter",
+		"version": "0.7.3"
+	},
+	"server": {
+		"name": "mcp-remote",
+		"source": {
+			"kind": "local",
+			"path": "<adhoc>"
+		},
+		"definition": {
+			"name": "mcp-remote",
+			"description": "Heptabase knowledge base CLI",
+			"command": {
+				"kind": "stdio",
+				"command": "npx",
+				"args": [
+					"-y",
+					"mcp-remote@latest",
+					"https://api.heptabase.com/mcp",
+					"--transport",
+					"http-only"
+				]
+			}
+		}
+	},
+	"artifact": {
+		"path": "",
+		"kind": "template"
+	},
+	"invocation": {
+		"serverRef": "{\"name\":\"mcp-remote\",\"description\":\"Heptabase knowledge base CLI\",\"command\":{\"kind\":\"stdio\",\"command\":\"npx\",\"args\":[\"-y\",\"mcp-remote@latest\",\"https://api.heptabase.com/mcp\",\"--transport\",\"http-only\"]},\"source\":{\"kind\":\"local\",\"path\":\"<adhoc>\"}}",
+		"configPath": "<adhoc>",
+		"runtime": "bun",
+		"bundler": "bun",
+		"outputPath": "./heptabase-cli.ts",
+		"compile": "./heptabase",
+		"timeoutMs": 30000,
+		"minify": false
+	}
 } as const;
 const artifactKind = determineArtifactKind();
 const program = new Command();
@@ -323,15 +323,15 @@ program.description(embeddedDescription);
 program.option('-t, --timeout <ms>', 'Call timeout in milliseconds', (value) => parseInt(value, 10), 30000);
 program.option('-o, --output <format>', 'Output format: text|markdown|json|raw', 'text');
 const commandSignatures: Record<string, string> = {
-  "save-to-note-card": "function save_to_note_card(content: string);",
-  "append-to-journal": "function append_to_journal(content: string);",
-  "get-journal-range": "function get_journal_range(startDate: string, endDate: string);",
-  "get-whiteboard-with-objects": "function get_whiteboard_with_objects(whiteboardId: string);",
-  "get-object": "function get_object(objectId: string, objectType: \"card\" | \"journal\" | \"videoCard\" | \"audioCard\" | \"imageCard\" | \"highlightElement\" | \"textElement\" | \"videoElement\" | \"imageElement\" | \"chat\" | \"chatMessage\" | \"chatMessagesElement\" | \"section\");",
-  "get-pdf-pages": "function get_pdf_pages(pdfCardId: string, startPageNumber: number, endPageNumber: number);",
-  "search-pdf-content": "function search_pdf_content(pdfCardId: string, keywords: string[]);",
-  "semantic-search-objects": "function semantic_search_objects(queries: string[], resultObjectTypes: \"card\" | \"pdfCard\" | \"mediaCard\" | \"highlightElement\" | \"journal\");",
-  "search-whiteboards": "function search_whiteboards(keywords: string[]);"
+	"save-to-note-card": "function save_to_note_card(content: string);",
+	"append-to-journal": "function append_to_journal(content: string);",
+	"get-journal-range": "function get_journal_range(startDate: string, endDate: string);",
+	"get-whiteboard-with-objects": "function get_whiteboard_with_objects(whiteboardId: string);",
+	"get-object": "function get_object(objectId: string, objectType: \"card\" | \"journal\" | \"videoCard\" | \"audioCard\" | \"imageCard\" | \"highlightElement\" | \"textElement\" | \"videoElement\" | \"imageElement\" | \"chat\" | \"chatMessage\" | \"chatMessagesElement\" | \"section\");",
+	"get-pdf-pages": "function get_pdf_pages(pdfCardId: string, startPageNumber: number, endPageNumber: number);",
+	"search-pdf-content": "function search_pdf_content(pdfCardId: string, keywords: string[]);",
+	"semantic-search-objects": "function semantic_search_objects(queries: string[], resultObjectTypes: \"card\" | \"pdfCard\" | \"mediaCard\" | \"highlightElement\" | \"journal\");",
+	"search-whiteboards": "function search_whiteboards(keywords: string[]);"
 };
 program.configureHelp({
 	commandTerm(cmd) {
@@ -344,13 +344,13 @@ program.showSuggestionAfterError(true);
 program
 	.command("save-to-note-card")
 	.summary("save-to-note-card --content <content> [--raw <json>]")
-	.description("Save any information to a note card in the main space in Heptabase.")
+	.description("將任何資訊儲存至 Heptabase 主空間的筆記卡片中。")
 	.usage("--content <content> [--raw <json>]")
 	.option('--raw <json>', 'Provide raw JSON arguments to the tool, bypassing flag parsing.')
 
 	.requiredOption("--content <content>", "Content of the card. In markdown format. Each block should be separated by an empty line. The first line should be an h1, which will be treated as the title of the card.")
-	
-	.alias("save_to_note_card")	.action(async (cmdOpts) => {
+
+	.alias("save_to_note_card").action(async (cmdOpts) => {
 		const globalOptions = program.opts();
 		const runtime = await ensureRuntime();
 		const serverName = embeddedName;
@@ -364,7 +364,7 @@ program
 			const result = await invokeWithTimeout(call, globalOptions.timeout || 30000);
 			printResult(result, globalOptions.output ?? 'text');
 		} finally {
-			await runtime.close(serverName).catch(() => {});
+			await runtime.close(serverName).catch(() => { });
 		}
 	})
 	.addHelpText('after', () => '\nExample:\n  ' + "mcporter call mcp-remote.save_to_note_card(content: \"value\")");
@@ -372,13 +372,13 @@ program
 program
 	.command("append-to-journal")
 	.summary("append-to-journal --content <content> [--raw <json>]")
-	.description("Append content to today's journal in Heptabase. If today's journal does not exist, it will be created.")
+	.description("將內容附加至 Heptabase 今天的日記中。如果今天的日記不存在，則會自動建立。")
 	.usage("--content <content> [--raw <json>]")
 	.option('--raw <json>', 'Provide raw JSON arguments to the tool, bypassing flag parsing.')
 
 	.requiredOption("--content <content>", "Content to append to the journal. In markdown format. Each block should be separated by an empty line.")
-	
-	.alias("append_to_journal")	.action(async (cmdOpts) => {
+
+	.alias("append_to_journal").action(async (cmdOpts) => {
 		const globalOptions = program.opts();
 		const runtime = await ensureRuntime();
 		const serverName = embeddedName;
@@ -392,7 +392,7 @@ program
 			const result = await invokeWithTimeout(call, globalOptions.timeout || 30000);
 			printResult(result, globalOptions.output ?? 'text');
 		} finally {
-			await runtime.close(serverName).catch(() => {});
+			await runtime.close(serverName).catch(() => { });
 		}
 	})
 	.addHelpText('after', () => '\nExample:\n  ' + "mcporter call mcp-remote.append_to_journal(content: \"value\")");
@@ -400,14 +400,14 @@ program
 program
 	.command("get-journal-range")
 	.summary("get-journal-range --start-date <start-date> --end-date <end-date> [--raw <json>]")
-	.description("Retrieve daily journal entries within a date range (inclusive) from the user's Heptabase knowledge base.\n\nWHAT IT RETURNS:\n- Complete content for each journal entry in the specified period\n- All journal entries from startDate to endDate (inclusive)\n\nUSE WHEN:\n- User asks about their journal entries during a time period\n- User wants to see what they wrote in past days/weeks/months\n- User needs to review their daily notes\n\nIMPORTANT CONSTRAINTS:\n- Each call can retrieve at most 92 days (approximately 3 months)\n- For longer periods, make multiple calls (e.g., 4 calls for one year)\n- Dates use YYYY-MM-DD format. Both startDate and endDate are inclusive.")
+	.description("從使用者的 Heptabase 知識庫中，取得指定日期範圍內（包含首尾）的每日日記內容。\n\n回傳內容：\n- 指定期間內每篇日記的完整內容\n- startDate 到 endDate（包含）之間的所有日記\n\n使用時機：\n- 使用者詢問其特定時期的日記內容\n- 使用者想查看過去幾天/週/月的筆記\n- 使用需複習每日筆記\n\n重要限制：\n- 每次呼叫最多只能取得 92 天（約 3 個月）的資料\n- 若需更長期的資料，請進行多次呼叫（例如一年需呼叫 4 次）\n- 日期請使用 YYYY-MM-DD 格式。startDate 與 endDate 皆包含在內。")
 	.usage("--start-date <start-date> --end-date <end-date> [--raw <json>]")
 	.option('--raw <json>', 'Provide raw JSON arguments to the tool, bypassing flag parsing.')
 
 	.requiredOption("--start-date <start-date>", "The start date of the journal range (YYYY-MM-DD). Maximum 92 days between startDate and endDate.")
 	.requiredOption("--end-date <end-date>", "The end date of the journal range (YYYY-MM-DD). Must be >= startDate and within 92 days of startDate.")
-	
-	.alias("get_journal_range")	.action(async (cmdOpts) => {
+
+	.alias("get_journal_range").action(async (cmdOpts) => {
 		const globalOptions = program.opts();
 		const runtime = await ensureRuntime();
 		const serverName = embeddedName;
@@ -417,12 +417,12 @@ program
 		try {
 			const args = cmdOpts.raw ? JSON.parse(cmdOpts.raw) : ({} as Record<string, unknown>);
 			if (cmdOpts.startDate !== undefined) args.startDate = cmdOpts.startDate;
-		if (cmdOpts.endDate !== undefined) args.endDate = cmdOpts.endDate;
+			if (cmdOpts.endDate !== undefined) args.endDate = cmdOpts.endDate;
 			const call = (proxy.getJournalRange as any)(args);
 			const result = await invokeWithTimeout(call, globalOptions.timeout || 30000);
 			printResult(result, globalOptions.output ?? 'text');
 		} finally {
-			await runtime.close(serverName).catch(() => {});
+			await runtime.close(serverName).catch(() => { });
 		}
 	})
 	.addHelpText('after', () => '\nExample:\n  ' + "mcporter call mcp-remote.get_journal_range(startDate: \"value\", endDate: \"value\")");
@@ -430,13 +430,13 @@ program
 program
 	.command("get-whiteboard-with-objects")
 	.summary("get-whiteboard-with-objects --whiteboard-id <whiteboard-id> [--raw <json>]")
-	.description("List all objects on a whiteboard with their content from the user's Heptabase knowledge base.\n\nWHAT IT RETURNS:\n- Complete whiteboard structure showing all objects and their relationships\n- Partial content of cards, sections, text elements, mindmaps, images on the whiteboard\n- Connections between objects\n\nUSE WHEN:\n- You've already got the whiteboard id from searchWhiteboards or semanticSearchObjects\n\nHEPTABASE STRUCTURE:\n- Whiteboards are visual canvases containing multiple objects\n- Objects on the same whiteboard are typically related to the same topic")
+	.description("列出 Heptabase 知識庫中指定白板上的所有物件及其內容。\n\n回傳內容：\n- 顯示所有物件及其關係的完整白板結構\n- 白板上卡片、Section、文字區塊、心智圖、圖片的部分內容\n- 物件之間的連接線關係\n\n使用時機：\n- 您已經透過 searchWhiteboards 或 semanticSearchObjects 取得白板 ID 時\n\nHEPTABASE 結構：\n- 白板是包含多個物件的視覺化畫布\n- 同一個白板上的物件通常與同一主題相關")
 	.usage("--whiteboard-id <whiteboard-id> [--raw <json>]")
 	.option('--raw <json>', 'Provide raw JSON arguments to the tool, bypassing flag parsing.')
 
 	.requiredOption("--whiteboard-id <whiteboard-id>", "The id of the whiteboard to retrieve with all its objects. (example: example-id)")
-	
-	.alias("get_whiteboard_with_objects")	.action(async (cmdOpts) => {
+
+	.alias("get_whiteboard_with_objects").action(async (cmdOpts) => {
 		const globalOptions = program.opts();
 		const runtime = await ensureRuntime();
 		const serverName = embeddedName;
@@ -450,7 +450,7 @@ program
 			const result = await invokeWithTimeout(call, globalOptions.timeout || 30000);
 			printResult(result, globalOptions.output ?? 'text');
 		} finally {
-			await runtime.close(serverName).catch(() => {});
+			await runtime.close(serverName).catch(() => { });
 		}
 	})
 	.addHelpText('after', () => '\nExample:\n  ' + "mcporter call mcp-remote.get_whiteboard_with_objects(whiteboardId: \"example-id\")");
@@ -458,14 +458,14 @@ program
 program
 	.command("get-object")
 	.summary("get-object --object-id <object-id> --object-type <object-type:card|journal|videoCard|audioCard|imageCard|highlightElement|textElement|videoElement|imageElement|chat|chatMessage|chatMessagesElement|section> [--raw <json>]")
-	.description("Retrieve the complete content of an object from the user's Heptabase knowledge base.\n\nWHAT IT RETURNS:\n- Full content of cards (notes, journals, media, highlights)\n- Complete transcripts for video/audio cards\n- All content regardless of length (no chunk limits)\n\nUSE WHEN:\n- You found relevant objects via semanticSearchObjects or getWhiteboardWithObjects and need full content\n  - Determine if you have all the content of an object by checking its \"hasMore\" flag\n- User asks about a specific object you've identified\n- You need complete information (e.g., for summarization, translation, or detailed questions)\n\nOBJECT TYPES:\n- card: Text notes\n- videoCard/audioCard/imageCard\n- journal: Daily journal entries  \n- highlightElement\n- section/textElement: whiteboard elements\n- chat/chatMessage/chatMessagesElement: Chat conversations\n\nNOTE: Do not use this on pdfCard objects since they might be too large.")
+	.description("從使用者的 Heptabase 知識庫中取得單一物件的完整內容。\n\n回傳內容：\n- 卡片（筆記、日記、媒體、螢光筆）的完整內容\n- 影片/音訊卡片的完整逐字稿\n- 不受長度限制的所有內容\n\n使用時機：\n- 透過 semanticSearchObjects 或 getWhiteboardWithObjects 找到相關物件後，需要完整內容時\n  - 可透過檢查「hasMore」標記來確認是否已取得該物件的所有內容\n- 使用者詢問您識別出的某個特定物件時\n- 需要完整資訊時（例如用於摘要、翻譯或詳細問題）\n\n物件類型：\n- card: 純文字筆記\n- videoCard/audioCard/imageCard\n- journal: 每日日記\n- highlightElement\n- section/textElement: 白板元素\n- chat/chatMessage/chatMessagesElement: 聊天對話\n\n注意：請勿將此工具用於 pdfCard 物件，因為內容可能過大。")
 	.usage("--object-id <object-id> --object-type <object-type:card|journal|videoCard|audioCard|imageCard|highlightElement|textElement|videoElement|imageElement|chat|chatMessage|chatMessagesElement|section> [--raw <json>]")
 	.option('--raw <json>', 'Provide raw JSON arguments to the tool, bypassing flag parsing.')
 
 	.requiredOption("--object-id <object-id>", "The id of the object to retrieve. (example: example-id)")
 	.requiredOption("--object-type <object-type:card|journal|videoCard|audioCard|imageCard|highlightElement|textElement|videoElement|imageElement|chat|chatMessage|chatMessagesElement|section>", "The type of the object. Do not use it on pdfCard. (choices: card, journal, videoCard, audioCard, imageCard, highlightElement, textElement, videoElement, imageElement, chat, chatMessage, chatMessagesElement, section; example: card)")
-	
-	.alias("get_object")	.action(async (cmdOpts) => {
+
+	.alias("get_object").action(async (cmdOpts) => {
 		const globalOptions = program.opts();
 		const runtime = await ensureRuntime();
 		const serverName = embeddedName;
@@ -475,12 +475,12 @@ program
 		try {
 			const args = cmdOpts.raw ? JSON.parse(cmdOpts.raw) : ({} as Record<string, unknown>);
 			if (cmdOpts.objectId !== undefined) args.objectId = cmdOpts.objectId;
-		if (cmdOpts.objectType !== undefined) args.objectType = cmdOpts.objectType;
+			if (cmdOpts.objectType !== undefined) args.objectType = cmdOpts.objectType;
 			const call = (proxy.getObject as any)(args);
 			const result = await invokeWithTimeout(call, globalOptions.timeout || 30000);
 			printResult(result, globalOptions.output ?? 'text');
 		} finally {
-			await runtime.close(serverName).catch(() => {});
+			await runtime.close(serverName).catch(() => { });
 		}
 	})
 	.addHelpText('after', () => '\nExample:\n  ' + "mcporter call mcp-remote.get_object(objectId: \"example-id\", objectType: \"card\")");
@@ -488,15 +488,15 @@ program
 program
 	.command("get-pdf-pages")
 	.summary("get-pdf-pages --pdf-card-id <pdf-card-id> --start-page-number <start-page-number:number> --end-page-number <end-page-number:number> [--raw <json>]")
-	.description("Retrieve specific pages from a PDF card by page numbers from the user's Heptabase knowledge base.\n\nWHAT IT RETURNS:\n- Complete content from [startPageNumber, endPageNumber] inclusive\n- All content from the specified page range\n\nUSE WHEN:\n- You know the specific page numbers to retrieve\n- User asks for content from specific pages\n- You need complete sections after finding relevant pages via search_pdf_content\n- For summarization/translation, retrieve pages in batches\n\nNOTE: Page numbers start from 1 (not 0). You can get any number of pages you want. But if you need significantly more than 100 pages, ask user for clarification first.")
+	.description("根據頁碼從使用者的 Heptabase 知識庫中取得特定 PDF 卡片的頁面內容。\n\n回傳內容：\n- 從 [startPageNumber, endPageNumber]（包含）的完整內容\n- 指定頁面範圍內的所有內容\n\n使用時機：\n- 當您確切知道要取得哪些頁碼時\n- 使用者指定要求特定頁面的內容時\n- 透過 search_pdf_content 找到相關頁面後，需要完整的段落內容時\n- 進行摘要/翻譯時，可分批取得頁面\n\n注意：頁碼從 1 開始（而非 0）。您可以取得任意數量的頁面，但如果需要的頁數遠大於 100 頁，請先向使用者釐清需求。")
 	.usage("--pdf-card-id <pdf-card-id> --start-page-number <start-page-number:number> --end-page-number <end-page-number:number> [--raw <json>]")
 	.option('--raw <json>', 'Provide raw JSON arguments to the tool, bypassing flag parsing.')
 
 	.requiredOption("--pdf-card-id <pdf-card-id>", "The UUID of the PDF card to get pages from. (example: example-id)")
 	.requiredOption("--start-page-number <start-page-number:number>", "The page number to start from. (inclusive, starts from 1) (example: 1)", (value) => parseFloat(value))
 	.requiredOption("--end-page-number <end-page-number:number>", "The page number to end at. (inclusive) (example: 1)", (value) => parseFloat(value))
-	
-	.alias("get_pdf_pages")	.action(async (cmdOpts) => {
+
+	.alias("get_pdf_pages").action(async (cmdOpts) => {
 		const globalOptions = program.opts();
 		const runtime = await ensureRuntime();
 		const serverName = embeddedName;
@@ -506,13 +506,13 @@ program
 		try {
 			const args = cmdOpts.raw ? JSON.parse(cmdOpts.raw) : ({} as Record<string, unknown>);
 			if (cmdOpts.pdfCardId !== undefined) args.pdfCardId = cmdOpts.pdfCardId;
-		if (cmdOpts.startPageNumber !== undefined) args.startPageNumber = cmdOpts.startPageNumber;
-		if (cmdOpts.endPageNumber !== undefined) args.endPageNumber = cmdOpts.endPageNumber;
+			if (cmdOpts.startPageNumber !== undefined) args.startPageNumber = cmdOpts.startPageNumber;
+			if (cmdOpts.endPageNumber !== undefined) args.endPageNumber = cmdOpts.endPageNumber;
 			const call = (proxy.getPdfPages as any)(args);
 			const result = await invokeWithTimeout(call, globalOptions.timeout || 30000);
 			printResult(result, globalOptions.output ?? 'text');
 		} finally {
-			await runtime.close(serverName).catch(() => {});
+			await runtime.close(serverName).catch(() => { });
 		}
 	})
 	.addHelpText('after', () => '\nExample:\n  ' + "mcporter call mcp-remote.get_pdf_pages(pdfCardId: \"example-id\", startPageN, ...)");
@@ -520,14 +520,14 @@ program
 program
 	.command("search-pdf-content")
 	.summary("search-pdf-content --pdf-card-id <pdf-card-id> --keywords <keywords:value1,value2> [--raw <json>]")
-	.description("Search within a large PDF using BM25 keyword matching (OR logic, fuzzy) from the user's Heptabase knowledge base.\n\nWHAT IT RETURNS:\n- Up to 80 ranked chunks matching the keywords\n- Expanded contiguous ranges around matching chunks for context\n\nUSE WHEN:\n- User asks about content within a PDF\n- You need to find specific information in a PDF document\n- User wants to search for keywords or topics in a PDF\n\nIMPORTANT:\n- You must first obtain the PDF card ID using other available tools (e.g., semanticSearchObjects or getObject) before calling this function\n- Use broad keywords, synonyms, and related terms to maximize coverage\n- Follow with get_pdf_pages for complete sections if needed")
+	.description("在大型 PDF 中使用 BM25 關鍵字比對（OR 邏輯、模糊搜尋）尋找 Heptabase 知識庫內的內容。\n\n回傳內容：\n- 最多 80 個與關鍵字相符的排序區塊\n- 包含相符區塊前後的連續範圍以提供上下文\n\n使用時機：\n- 使用者詢問 PDF 內的特定內容時\n- 需要在 PDF 文件中尋找特定資訊時\n- 使用者想要在 PDF 中搜尋關鍵字或主題時\n\n重要事項：\n- 在呼叫此功能之前，必須先透過其他可用工具（例如 semanticSearchObjects 或 getObject）取得 PDF 卡片的 ID。\n- 請使用廣泛的關鍵字、同義詞和相關詞彙，以達到最大的搜尋涵蓋率。\n- 若有需要，搜完後請接著使用 get_pdf_pages 來取得完整的段落內容。")
 	.usage("--pdf-card-id <pdf-card-id> --keywords <keywords:value1,value2> [--raw <json>]")
 	.option('--raw <json>', 'Provide raw JSON arguments to the tool, bypassing flag parsing.')
 
 	.requiredOption("--pdf-card-id <pdf-card-id>", "The UUID of the PDF card to search. (example: example-id)")
 	.requiredOption("--keywords <keywords:value1,value2>", "No more than 5 keywords. Use varied terms, synonyms, and related concepts (e.g., [\"neural network\", \"deep learning\", \"architecture\"]). OR logic—diverse keywords = broader coverage. (example: value1,value2)", (value) => value.split(',').map((v) => v.trim()))
-	
-	.alias("search_pdf_content")	.action(async (cmdOpts) => {
+
+	.alias("search_pdf_content").action(async (cmdOpts) => {
 		const globalOptions = program.opts();
 		const runtime = await ensureRuntime();
 		const serverName = embeddedName;
@@ -537,12 +537,12 @@ program
 		try {
 			const args = cmdOpts.raw ? JSON.parse(cmdOpts.raw) : ({} as Record<string, unknown>);
 			if (cmdOpts.pdfCardId !== undefined) args.pdfCardId = cmdOpts.pdfCardId;
-		if (cmdOpts.keywords !== undefined) args.keywords = cmdOpts.keywords;
+			if (cmdOpts.keywords !== undefined) args.keywords = cmdOpts.keywords;
 			const call = (proxy.searchPdfContent as any)(args);
 			const result = await invokeWithTimeout(call, globalOptions.timeout || 30000);
 			printResult(result, globalOptions.output ?? 'text');
 		} finally {
-			await runtime.close(serverName).catch(() => {});
+			await runtime.close(serverName).catch(() => { });
 		}
 	})
 	.addHelpText('after', () => '\nExample:\n  ' + "mcporter call mcp-remote.search_pdf_content(pdfCardId: \"example-id\", keywo, ...)");
@@ -550,14 +550,14 @@ program
 program
 	.command("semantic-search-objects")
 	.summary("semantic-search-objects --queries <queries:value1,value2> --result-object-types <result-object-types:card|pdfCard|mediaCard|highlightElement|journal> [--raw <json>]")
-	.description("Find WHICH objects exist on a topic in the user's Heptabase knowledge base using hybrid search (full-text + semantic).\n\nHEPTABASE STRUCTURE:\n- Cards: Knowledge units (notes, journals, PDFs, videos, images, highlights)\n- Whiteboards: Visual canvases containing cards and other objects\n\nUSE WHEN: Discovering what content exists about a topic (e.g., \"machine learning papers\", \"project notes\")\n\nSTRATEGY:\n- Use multiple queries from different perspectives (1-3 queries)\n- Results show previews with titles and partial content\n- If you find relevant objects, use getObject to retrieve complete content\n- Returned objects may reference whiteboards they're on—use searchWhiteboards if you need to explore those whiteboards")
+	.description("使用混合搜尋（全文檢索 + 語意搜尋）在 Heptabase 知識庫中尋找存在哪些與主題相關的物件。\n\nHEPTABASE 結構：\n- 卡片：知識單位（筆記、日記、PDF、影片、圖片、螢光筆）\n- 白板：包含卡片與其他物件的視覺化畫布\n\n使用時機：想了解系統中有哪些關於特定主題的內容時（例如：「機器學習輪文」、「專案筆記」）\n\n搜尋策略：\n- 請從不同角度使用多個查詢（1-3 個查詢）\n- 搜尋結果會顯示包含標題與部分內容的預覽\n- 如果找到相關物件，請使用 getObject 來取得完整內容\n- 回傳的物件可能會表明它隸屬於哪些白板——如果您想探索這些白板，請使用 searchWhiteboards")
 	.usage("--queries <queries:value1,value2> --result-object-types <result-object-types:card|pdfCard|mediaCard|highlightElement|journal> [--raw <json>]")
 	.option('--raw <json>', 'Provide raw JSON arguments to the tool, bypassing flag parsing.')
 
 	.requiredOption("--queries <queries:value1,value2>", "Array of search queries in natural language (1-3 queries). Multiple queries from different perspectives improve coverage. Example: [\"climate change impacts\", \"environmental policy\"]. (example: value1,value2)", (value) => value.split(',').map((v) => v.trim()))
 	.requiredOption("--result-object-types <result-object-types:card|pdfCard|mediaCard|highlightElement|journal>", "Filter for specific object types. Pass empty array to search all types. (choices: card, pdfCard, mediaCard, highlightElement, journal; example: card)", (value) => value.split(',').map((v) => v.trim()))
-	
-	.alias("semantic_search_objects")	.action(async (cmdOpts) => {
+
+	.alias("semantic_search_objects").action(async (cmdOpts) => {
 		const globalOptions = program.opts();
 		const runtime = await ensureRuntime();
 		const serverName = embeddedName;
@@ -567,12 +567,12 @@ program
 		try {
 			const args = cmdOpts.raw ? JSON.parse(cmdOpts.raw) : ({} as Record<string, unknown>);
 			if (cmdOpts.queries !== undefined) args.queries = cmdOpts.queries;
-		if (cmdOpts.resultObjectTypes !== undefined) args.resultObjectTypes = cmdOpts.resultObjectTypes;
+			if (cmdOpts.resultObjectTypes !== undefined) args.resultObjectTypes = cmdOpts.resultObjectTypes;
 			const call = (proxy.semanticSearchObjects as any)(args);
 			const result = await invokeWithTimeout(call, globalOptions.timeout || 30000);
 			printResult(result, globalOptions.output ?? 'text');
 		} finally {
-			await runtime.close(serverName).catch(() => {});
+			await runtime.close(serverName).catch(() => { });
 		}
 	})
 	.addHelpText('after', () => '\nExample:\n  ' + "mcporter call mcp-remote.semantic_search_objects(queries: [\"value1\", \"valu, ...)");
@@ -580,13 +580,13 @@ program
 program
 	.command("search-whiteboards")
 	.summary("search-whiteboards --keywords <keywords:value1,value2> [--raw <json>]")
-	.description("Search for whiteboards by keywords in the user's Heptabase knowledge base.\n\nHEPTABASE STRUCTURE:\n- Whiteboards are visual canvases where users organize their knowledge\n- Each whiteboard contains cards, sections, text elements, mindmaps, images, and connections\n- Users typically group related content on the same whiteboard\n- Whiteboard names/titles indicate their topic or purpose\n\nUSE WHEN:\n- Looking for whiteboards on a specific topic (e.g., \"machine learning project\", \"research papers\")\n- User mentions exploring or understanding their workspace organization\n- You found objects via semanticSearchObjects that reference interesting whiteboards\n- Need to see how content is organized and connected\n\nSEARCH STRATEGY:\n- Use varied keywords, synonyms, and related concepts for better coverage\n- OR logic: diverse keywords = broader results\n- Example: [\"neural network\", \"deep learning\", \"architecture\"]\n\nNEXT STEPS:\n- Results show whiteboard titles and basic info\n- Use getWhiteboardWithObjects to retrieve full content of relevant whiteboards")
+	.description("透過關鍵字在 Heptabase 知識庫中搜尋白板。\n\nHEPTABASE 結構：\n- 白板是使用者用來組織知識的視覺化畫布\n- 每個白板都包含卡片、Section、文字區塊、心智圖、圖片以及連接線\n- 使用者通常將相關內容群組在同一個白板上\n- 白板名稱/標題代表了其主題或用途\n\n使用時機：\n- 正在尋找特定主題的白板時（例如：「機器學習專案」、「研究論文」）\n- 使用者提到探索或理解他們的工作區組織時\n- 您透過 semanticSearchObjects 找到感興趣的物件且那些物件提到了某個白板時\n- 需要了解內容是如何被組織與關聯的\n\n搜尋策略：\n- 使用多樣的關鍵字、同義詞與相關概念來獲得更好的涵蓋率\n- OR 邏輯：不同的關鍵字 = 更廣泛的結果\n- 範例：[\"類神經網路\", \"深度學習\", \"架構\"]\n\n下一步：\n- 搜尋結果會顯示白板標題與基本資訊\n- 請使用 getWhiteboardWithObjects 取得相關白板的完整內容")
 	.usage("--keywords <keywords:value1,value2> [--raw <json>]")
 	.option('--raw <json>', 'Provide raw JSON arguments to the tool, bypassing flag parsing.')
 
 	.requiredOption("--keywords <keywords:value1,value2>", "1-5 keywords. Use varied terms, synonyms, and related concepts for broader coverage (OR logic). Example: [\"project management\", \"productivity\", \"workflow\"]. (example: value1,value2)", (value) => value.split(',').map((v) => v.trim()))
-	
-	.alias("search_whiteboards")	.action(async (cmdOpts) => {
+
+	.alias("search_whiteboards").action(async (cmdOpts) => {
 		const globalOptions = program.opts();
 		const runtime = await ensureRuntime();
 		const serverName = embeddedName;
@@ -600,7 +600,7 @@ program
 			const result = await invokeWithTimeout(call, globalOptions.timeout || 30000);
 			printResult(result, globalOptions.output ?? 'text');
 		} finally {
-			await runtime.close(serverName).catch(() => {});
+			await runtime.close(serverName).catch(() => { });
 		}
 	})
 	.addHelpText('after', () => '\nExample:\n  ' + "mcporter call mcp-remote.search_whiteboards(keywords: [\"value1\", \"value2\"])");
@@ -714,34 +714,34 @@ function formatGlobalFlags(): string {
 }
 
 function formatQuickStart(): string {
-  const header = supportsAnsiColor ? tint.bold('Quick start') : 'Quick start';
-  const examples = quickStartExamples();
-  if (!examples.length) {
-    return header;
-  }
-  const formatted = examples.map(([cmd, note]) => '  ' + cmd + '\n    ' + tint.dim('# ' + note));
-  return [header, ...formatted].join('\n');
+	const header = supportsAnsiColor ? tint.bold('Quick start') : 'Quick start';
+	const examples = quickStartExamples();
+	if (!examples.length) {
+		return header;
+	}
+	const formatted = examples.map(([cmd, note]) => '  ' + cmd + '\n    ' + tint.dim('# ' + note));
+	return [header, ...formatted].join('\n');
 }
 
 function quickStartExamples(): Array<[string, string]> {
-  const examples: Array<[string, string]> = [];
-  const commandMap = new Map<string, string>();
-  program.commands.forEach((cmd) => {
-    const name = cmd.name();
-    if (name !== '__mcporter_inspect') {
-      commandMap.set(name, name);
-    }
-  });
-  const embedded = Array.isArray(generatorTools) ? generatorTools : [];
-  for (const entry of embedded.slice(0, 3)) {
-    const commandName = commandMap.get(entry.name) ?? entry.name;
-    const flags = entry.flags ? ' ' + entry.flags.replace(/<[^>]+>/g, '<value>') : '';
-    examples.push([embeddedName + ' ' + commandName + flags, 'invoke ' + commandName]);
-  }
-  if (!examples.length) {
-    examples.push([embeddedName + ' <tool> --key value', 'invoke a tool with flags']);
-  }
-  return examples;
+	const examples: Array<[string, string]> = [];
+	const commandMap = new Map<string, string>();
+	program.commands.forEach((cmd) => {
+		const name = cmd.name();
+		if (name !== '__mcporter_inspect') {
+			commandMap.set(name, name);
+		}
+	});
+	const embedded = Array.isArray(generatorTools) ? generatorTools : [];
+	for (const entry of embedded.slice(0, 3)) {
+		const commandName = commandMap.get(entry.name) ?? entry.name;
+		const flags = entry.flags ? ' ' + entry.flags.replace(/<[^>]+>/g, '<value>') : '';
+		examples.push([embeddedName + ' ' + commandName + flags, 'invoke ' + commandName]);
+	}
+	if (!examples.length) {
+		examples.push([embeddedName + ' <tool> --key value', 'invoke a tool with flags']);
+	}
+	return examples;
 }
 
 function printResult(result: unknown, format: string) {
@@ -794,7 +794,7 @@ function normalizeEmbeddedServer(server: typeof embeddedServer) {
 			...base,
 			command: {
 				...(server.command as Record<string, unknown>),
-				args: [ ...((server.command as any).args ?? []) ],
+				args: [...((server.command as any).args ?? [])],
 			},
 		};
 	}

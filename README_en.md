@@ -120,6 +120,21 @@ Full export of whiteboard cards to local Markdown files. Ideal for backups or LL
 heptabase export --keyword "Project Alpha" --output-dir ./backup
 ```
 
+### Bulk Import Local Markdown (Import)
+
+Batch import Markdown files from a local directory (including subdirectories) into Heptabase cards. Due to API limitations, cards cannot be automatically added to a specific Whiteboard during import.
+
+To facilitate subsequent organization, the system will use the directory structure as a "tag prefix" and append it to the front of the card title.
+
+1. `heptabase import <directory_path>` — Scan and import files
+2. **Auto Title Merging**: For example, `/docs/api/login.md` will generate a card with the title `# [docs/api] login`
+3. **Subsequent Classification**: Open Heptabase, search for `[directory_name]` to find the entire batch of imported cards, and then manually select and drag them into the designated Whiteboard.
+
+```bash
+# Example command
+heptabase import ./my-project-notes
+```
+
 ### Auto-Generate Hub (Hub)
 
 Quickly create a navigation index card when you have scattered topics across multiple whiteboards.
@@ -157,6 +172,7 @@ Supported output formats (`--output`): `text` (default), `json`, `markdown`, `ra
 - `get-pdf-pages`
 - `organize` (AI Auto-Organization)
 - `export` (Export whiteboard cards as Markdown)
+- `import` (Recursively scan folder and bulk import Markdown files)
 - `hub` (Auto-generate a Hub navigation card)
 
 ## Troubleshooting

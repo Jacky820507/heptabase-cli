@@ -3,12 +3,29 @@
 const { execFileSync } = require("child_process");
 const fs = require("fs");
 const path = require("path");
+require("dotenv").config({ path: path.join(__dirname, "..", "config", ".env") });
+const ical = require("node-ical");
+const { cmdGmailSync } = require("./gmail-sync-logic.cjs");
+
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 
 /** Resolve the tsx CLI path for running heptabase-cli.ts */
 function getTsxPath() {
     return path.join(__dirname, "..", "node_modules", "tsx", "dist", "cli.mjs");
+}
+
+/** Load simple .env from config/.env */
+function loadEnv() {
+    const envPath = path.join(__dirname, "..", "config", ".env");
+    if (!fs.existsSync(envPath)) return {};
+    const content = fs.readFileSync(envPath, "utf8");
+    const env = {};
+    content.split(/\r?\n/).forEach(line => {
+        const m = line.match(/^\s*([^#\s][^=]*)\s*=\s*(.*)$/);
+        if (m) env[m[1].trim()] = m[2].trim();
+    });
+    return env;
 }
 
 /** Call heptabase-cli.ts save-to-note-card with the given content */
@@ -19,6 +36,44 @@ function saveToNoteCard(content) {
         encoding: "utf8",
     });
     return result.trim();
+}
+
+/** Call heptabase-cli.ts append-to-journal with date and content */
+function appendToJournal(date, content) {
+    const tsx = getTsxPath();
+    const script = path.join(__dirname, "..", "heptabase-cli.ts");
+    // Use --raw JSON to pass the date parameter (not exposed as a CLI flag)
+    const rawJson = JSON.stringify({ content, date });
+    const result = execFileSync("node", [tsx, script, "append-to-journal", "--content", content, "--raw", rawJson], {
+        encoding: "utf8",
+        timeout: 30000,
+    });
+    return result.trim();
+}
+
+/** Run timetree-exporter to generate an ICS file using credentials from env */
+function runTimetreeExporter(env, outputPath) {
+    const python = env.PYTHON_PATH || "python";
+    const email = env.TIMETREE_EMAIL;
+    const password = env.TIMETREE_PASSWORD;
+    const code = env.TIMETREE_CALENDAR_CODE;
+
+    if (!email || !password) {
+        throw new Error("Missing TIMETREE_EMAIL or TIMETREE_PASSWORD in config/.env");
+    }
+
+    console.log(`📡 Exporting calendar from TimeTree for ${email}...`);
+    const args = ["-m", "timetree_exporter", "-o", outputPath, "-e", email];
+    if (code) args.push("-c", code);
+
+    // Provide password via env var so it doesn't prompt
+    const runEnv = { ...process.env, TIMETREE_PASSWORD: password };
+    try {
+        execFileSync(python, args, { env: runEnv, stdio: 'inherit' });
+        console.log(`✅ Exported to ${outputPath}`);
+    } catch (err) {
+        throw new Error(`Failed to run timetree-exporter: ${err.message}`);
+    }
 }
 
 /** Call heptabase-cli.ts get-journal-range */
@@ -841,12 +896,176 @@ async function cmdImport(dirPath) {
     console.log(`\n💡 Tip: Search for "${baseFolderName}" in Heptabase to find your imported cards and move them to a Whiteboard.`);
 }
 
+// ── sync-calendar ────────────────────────────────────────────────────────────
+
+/** Parse an ICS file and group events by date */
+function parseIcsEvents(icsPath) {
+    const data = ical.sync.parseFile(icsPath);
+    const events = [];
+    for (const key of Object.keys(data)) {
+        const ev = data[key];
+        if (ev.type !== 'VEVENT') continue;
+        events.push({
+            summary: ev.summary || '(無標題)',
+            start: ev.start ? new Date(ev.start) : null,
+            end: ev.end ? new Date(ev.end) : null,
+            location: ev.location || '',
+            description: ev.description || '',
+            allDay: !!(ev.datetype === 'date' || (ev.start && ev.end && isAllDay(ev.start, ev.end))),
+        });
+    }
+    return events;
+}
+
+/** Check if an event is all-day (starts at midnight and spans full day(s)) */
+function isAllDay(start, end) {
+    const s = new Date(start);
+    const e = new Date(end);
+    return s.getHours() === 0 && s.getMinutes() === 0 &&
+           e.getHours() === 0 && e.getMinutes() === 0 &&
+           (e - s) >= 86400000;
+}
+
+/** Format time as HH:MM */
+function formatTime(date) {
+    return date.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', hour12: false });
+}
+
+/** Format date as YYYY-MM-DD */
+function formatDateStr(date) {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+}
+
+/** Group events by their start date (YYYY-MM-DD) */
+function groupEventsByDate(events) {
+    const groups = {};
+    for (const ev of events) {
+        if (!ev.start) continue;
+        const dateStr = formatDateStr(ev.start);
+        if (!groups[dateStr]) groups[dateStr] = [];
+        groups[dateStr].push(ev);
+    }
+    // Sort events within each group by start time
+    for (const dateStr of Object.keys(groups)) {
+        groups[dateStr].sort((a, b) => {
+            if (a.allDay && !b.allDay) return -1;
+            if (!a.allDay && b.allDay) return 1;
+            return (a.start || 0) - (b.start || 0);
+        });
+    }
+    return groups;
+}
+
+/** Format a single event as Markdown lines */
+function formatEventMarkdown(ev) {
+    let line;
+    if (ev.allDay) {
+        line = `- [ ] ${ev.summary}  (**全天**)`;
+    } else {
+        const timeRange = `${formatTime(ev.start)}–${formatTime(ev.end)}`;
+        line = `- [ ] ${ev.summary}  ${timeRange}`;
+    }
+    const extras = [];
+    if (ev.location) {
+        extras.push(`  📍 ${ev.location}`);
+    }
+    if (ev.description) {
+        // Truncate long descriptions and indent
+        const desc = ev.description.replace(/\r\n/g, '\n').split('\n')[0].slice(0, 200);
+        extras.push(`  📝 ${desc}`);
+    }
+    return [line, ...extras].join('\n');
+}
+
+async function cmdSyncCalendar(icsPath, daysFilter) {
+    const env = loadEnv();
+    let targetIcs = icsPath;
+
+    // If no ICS path provided, attempt automatic export using .env
+    if (!targetIcs) {
+        targetIcs = path.join(process.cwd(), "timetree_auto_sync.ics");
+        try {
+            runTimetreeExporter(env, targetIcs);
+        } catch (err) {
+            console.error(`\n❌ Error: Automatic export failed. ${err.message}`);
+            console.error(`💡 Tip: Please check your config/.env settings.`);
+            process.exit(1);
+        }
+    }
+
+    if (!fs.existsSync(targetIcs)) {
+        console.error(`Error: ICS file not found: ${targetIcs}`);
+        process.exit(1);
+    }
+
+    console.log(`\n📆 Parsing ICS file: ${targetIcs}...`);
+    const events = parseIcsEvents(targetIcs);
+    if (events.length === 0) {
+        console.log('No events found in the ICS file.');
+        return;
+    }
+    console.log(`Found ${events.length} events total.`);
+
+    // Filter by date range (Today 00:00 up to future N days)
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const futureLimit = new Date(today);
+    futureLimit.setDate(today.getDate() + daysFilter + 1); // +1 to include end of last day
+
+    // Default to include 3 days in the past to capture very recent missed items
+    const pastLimit = new Date(today);
+    pastLimit.setDate(today.getDate() - 3);
+
+    const filtered = events.filter(ev => {
+        if (!ev.start) return false;
+        const evStart = new Date(ev.start);
+        return evStart >= pastLimit && evStart < futureLimit;
+    });
+
+    if (filtered.length === 0) {
+        console.log(`No events found within the date range (last 3 days ~ next ${daysFilter} days).`);
+        return;
+    }
+    console.log(`${filtered.length} events found within range (${pastLimit.toDateString()} - ${futureLimit.toDateString()}).\n`);
+
+    // Group by date
+    const dateGroups = groupEventsByDate(filtered);
+    const sortedDates = Object.keys(dateGroups).sort();
+
+    let success = 0;
+    let failed = 0;
+
+    for (const dateStr of sortedDates) {
+        const eventsOfDay = dateGroups[dateStr];
+        const progress = `[${dateStr}]`;
+        process.stdout.write(`${progress} ${eventsOfDay.length} events...`);
+
+        // Build Markdown content (User requested no specific title)
+        let content = eventsOfDay.map(ev => formatEventMarkdown(ev)).join('\n\n');
+
+        try {
+            appendToJournal(dateStr, content);
+            console.log(' OK');
+            success++;
+        } catch (err) {
+            console.log(` FAILED (${err.message})`);
+            failed++;
+        }
+    }
+
+    console.log(`\n✅ Calendar sync complete!`);
+    console.log(`   Dates synced: ${success}, Failed: ${failed}, Total: ${sortedDates.length}`);
+    console.log(`   Events: ${filtered.length}`);
+}
+
 // ── CLI ──────────────────────────────────────────────────────────────────────
 
 function printHelp() {
     console.log(`
 heptabase-sync — Sync local domain SOPs & lessons to Heptabase
-
 Usage:
   heptabase domain <file.md>       Sync one domain SOP
   heptabase domain-all <dir>       Sync all domain SOPs in a directory
@@ -855,11 +1074,17 @@ Usage:
   heptabase export [options]       Export whiteboard cards as local Markdown files
   heptabase import <dir>           Recursively import Markdown files from a directory
   heptabase hub <topic>            Auto-generate a Hub card for a topic
+  heptabase sync-calendar [opts]   Sync ICS calendar events to Heptabase Journal
+  heptabase gmail-sync [opts]      Sync Gmail messages to Heptabase cards
 
 Export options:
   --whiteboard-id <id>    Whiteboard ID to export
   --keyword <text>        Search whiteboard by keyword
   --output-dir <path>     Output directory (default: ./export/<whiteboard-name>/)
+
+Sync-calendar options:
+  --ics <path>            Path to .ics file to import (if omitted, uses config/.env)
+  --days <N>              Sync events for the next N days (default: 14)
 
 Examples:
   heptabase domain e:\\RevitMCP\\domain\\detail-component-sync.md
@@ -867,6 +1092,8 @@ Examples:
   heptabase export --keyword "Dynamo" --output-dir E:\\Backup\\Dynamo
   heptabase import "D:\\PDF_Library"
   heptabase hub Dynamo
+  heptabase sync-calendar --days 14
+  heptabase gmail-sync --sender boss@company.com --days 7
 `);
 }
 
@@ -934,6 +1161,32 @@ switch (subcommand) {
         }
         cmdImport(path.resolve(args[1]));
         break;
+    case "sync-calendar": {
+        const icsPath = getFlagValue("--ics");
+        let syncDays = 14;
+        const syncDaysFlag = getFlagValue("--days");
+        if (syncDaysFlag) {
+            syncDays = parseInt(syncDaysFlag);
+        }
+        cmdSyncCalendar(icsPath ? path.resolve(icsPath) : null, isNaN(syncDays) ? 14 : syncDays);
+        break;
+    }
+    case "gmail-sync": {
+        const gmailQuery = getFlagValue("--query");
+        const gmailLabel = getFlagValue("--label");
+        const gmailSender = getFlagValue("--sender");
+        let gmailDays = 7;
+        const gmailDaysFlag = getFlagValue("--days");
+        if (gmailDaysFlag) gmailDays = parseInt(gmailDaysFlag);
+
+        cmdGmailSync({
+            query: gmailQuery,
+            label: gmailLabel,
+            sender: gmailSender,
+            days: isNaN(gmailDays) ? 7 : gmailDays
+        }, saveToNoteCard);
+        break;
+    }
     default:
         console.error(`Unknown subcommand: '${subcommand}'`);
         printHelp();

@@ -150,6 +150,49 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
                     required: ["topic"],
                 },
             },
+            {
+                name: "heptabase_sync_calendar",
+                description: "將 ICS 行事曆檔案中的事件同步至 Heptabase Journal。支援 TimeTree 匯出的 .ics 檔案。事件會按日期分組並以 Markdown 格式寫入對應日期的 Journal。",
+                inputSchema: {
+                    type: "object",
+                    properties: {
+                        icsPath: {
+                            type: "string",
+                            description: "本地 .ics 行事曆檔案的絕對路徑",
+                        },
+                        days: {
+                            type: "number",
+                            description: "同步未來 N 天的行程（預設 14 天）",
+                        },
+                    },
+                    required: ["icsPath"],
+                },
+            },
+            {
+                name: "heptabase_gmail_sync",
+                description: "將 Gmail 郵件同步至 Heptabase。支援依據關鍵字、標籤、寄件者或天數進行過濾。",
+                inputSchema: {
+                    type: "object",
+                    properties: {
+                        query: {
+                            type: "string",
+                            description: "Gmail 搜尋關鍵字 (例如：Project Alpha)",
+                        },
+                        label: {
+                            type: "string",
+                            description: "指定標籤 (例如：INBOX, UNREAD, Receipts)",
+                        },
+                        sender: {
+                            type: "string",
+                            description: "指定寄件者信箱",
+                        },
+                        days: {
+                            type: "number",
+                            description: "同步過去 N 天內的信件 (預設 7 天)",
+                        },
+                    },
+                },
+            },
         ],
     };
 });
@@ -202,6 +245,21 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         case "heptabase_hub": {
             const { topic } = args as Record<string, string>;
             cmdArgs = ["hub", topic];
+            break;
+        }
+        case "heptabase_sync_calendar": {
+            const { icsPath, days } = args as Record<string, any>;
+            cmdArgs = ["sync-calendar", "--ics", icsPath];
+            if (days) cmdArgs.push("--days", days.toString());
+            break;
+        }
+        case "heptabase_gmail_sync": {
+            const { query, label, sender, days } = args as Record<string, any>;
+            cmdArgs = ["gmail-sync"];
+            if (query) cmdArgs.push("--query", query);
+            if (label) cmdArgs.push("--label", label);
+            if (sender) cmdArgs.push("--sender", sender);
+            if (days) cmdArgs.push("--days", days.toString());
             break;
         }
         default:
