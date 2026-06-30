@@ -2,9 +2,23 @@
 /heptabase.exe
 /node_modules/
 /export/
-*.json
+/dist/
+
+# OS/editor noise
+.DS_Store
+
+# Logs and local scratch output
 *.txt
 *.log
-.DS_Store
+
+# Local credentials and auth state
 .env
-dist/
+.env.*
+/config/.env
+/config/token.json
+/.mcp-auth/
+
+# Local generated Heptabase/TimeTree exports
+/card_content.json
+/search_output.json
+/timetree_auto_sync.ics

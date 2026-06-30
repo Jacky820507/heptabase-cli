@@ -2,7 +2,7 @@
   "name": "heptabase-cli",
   "version": "0.1.0",
   "type": "module",
-  "description": "CLI for your personal Heptabase knowledge base — search, read, and write notes from the terminal",
+  "description": "Legacy CLI wrapper for Heptabase MCP workflows; prefer the desktop app CLI for 0.4.x local workflows.",
   "bin": {
     "heptabase": "./bin/heptabase.cjs"
   },
@@ -30,9 +30,13 @@
   },
   "homepage": "https://github.com/Jacky820507/heptabase-cli#readme",
   "engines": {
-    "bun": ">=1.0.0"
+    "bun": ">=1.0.0",
+    "node": ">=18"
   },
   "devDependencies": {
     "tsx": "^4.21.0"
+  },
+  "scripts": {
+    "check": "node --check bin/heptabase.cjs && node --check bin/heptabase-sync.cjs && node --check bin/gmail-sync-logic.cjs"
   }
 }

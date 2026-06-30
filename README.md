@@ -1,3 +1,7 @@
+> **Status:** This repository is a legacy MCP-remote wrapper (`0.1.x`). For current local workflows, prefer the Heptabase desktop app CLI (`heptabase --version` `0.4.x`) and the skills in `heptabase-cli-skills`.
+>
+> AISVS note: avoid floating remote MCP dependencies in high-trust agent workflows. Pin or verify external MCP components before use.
+
 # Heptabase CLI 使用說明
 
 從終端機搜尋、閱讀、寫入你的 Heptabase 個人知識庫。

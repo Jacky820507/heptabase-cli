@@ -1,3 +1,12 @@
 heptabase
+heptabase.exe
+node_modules/
 config/
+export/
+dist/
+*.txt
+*.log
+card_content.json
+search_output.json
+timetree_auto_sync.ics
 SKILL.md
